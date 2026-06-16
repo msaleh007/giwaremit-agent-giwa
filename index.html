@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GiwaRemit Agent — AI-Powered USDC Remittance</title>
+<title>GiwaRemit Agent — AI-Powered USDC Remittance on Arc</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
 <style>
   :root {
     --bg: #060914; --bg-elevated: #0C1322; --surface: #121A2E; --surface-2: #1A2438;
@@ -23,139 +24,158 @@
       radial-gradient(ellipse 70% 50% at 10% 90%, rgba(45,212,191,0.05), transparent 55%);
     pointer-events: none; z-index: 0;
   }
-
   .wrap { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 0 24px; }
 
-  /* NAV */
   nav { position: sticky; top: 0; z-index: 100; background: rgba(6,9,20,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--line); }
-  .nav-inner { max-width: 780px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-inner { max-width: 780px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
   .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: -0.5px; }
   .brand-mark { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--purple), var(--teal)); display: flex; align-items: center; justify-content: center; font-size: 16px; }
   .brand span { background: linear-gradient(135deg, var(--purple), var(--teal)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .nav-badges { display: flex; align-items: center; gap: 8px; }
+  .nav-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .badge { display: flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 100px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
   .badge-ai { background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); color: var(--purple); }
   .badge-arc { background: rgba(255,182,39,0.08); border: 1px solid rgba(255,182,39,0.2); color: var(--amber); }
   .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: blink 2s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .btn-wallet { background: linear-gradient(135deg, var(--purple), var(--teal)); border: none; color: white; padding: 9px 18px; border-radius: 10px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; transition: transform 0.2s; }
+  .btn-wallet:hover { transform: translateY(-1px); }
+  .btn-wallet.on { background: rgba(45,212,191,0.12); border: 1px solid var(--teal); color: var(--teal); }
 
-  /* HERO */
-  .hero { padding: 56px 0 32px; text-align: center; }
-  .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--purple); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 18px; background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.2); padding: 6px 14px; border-radius: 100px; }
-  .hero h1 { font-size: clamp(30px, 5vw, 48px); font-weight: 800; line-height: 1.08; letter-spacing: -1.5px; margin-bottom: 16px; }
+  .hero { padding: 48px 0 28px; text-align: center; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--purple); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.2); padding: 6px 14px; border-radius: 100px; }
+  .hero h1 { font-size: clamp(28px, 5vw, 46px); font-weight: 800; line-height: 1.08; letter-spacing: -1.5px; margin-bottom: 14px; }
   .hero h1 .grad { background: linear-gradient(120deg, var(--purple) 0%, var(--teal) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .hero p { color: var(--ink-dim); font-size: 16px; max-width: 480px; margin: 0 auto 32px; line-height: 1.65; }
+  .hero p { color: var(--ink-dim); font-size: 15px; max-width: 460px; margin: 0 auto 28px; line-height: 1.65; }
+
+  /* WALLET STATUS BAR */
+  .wallet-bar { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; margin-bottom: 18px; display: none; }
+  .wallet-bar.show { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .wallet-info { display: flex; align-items: center; gap: 10px; }
+  .wallet-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); animation: blink 2s infinite; }
+  .wallet-addr { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--teal); }
+  .wallet-balance { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--amber); font-weight: 600; }
+  .wallet-network { font-size: 11px; color: var(--ink-faint); background: rgba(45,212,191,0.08); border: 1px solid rgba(45,212,191,0.15); padding: 3px 9px; border-radius: 5px; }
 
   /* AGENT CARD */
-  .agent-card { background: linear-gradient(180deg, var(--bg-elevated), var(--surface)); border: 1px solid rgba(167,139,250,0.2); border-radius: 24px; padding: 28px; box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(167,139,250,0.05); margin-bottom: 24px; }
-
-  .agent-header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
-  .agent-avatar { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--purple), var(--teal)); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-  .agent-name { font-size: 15px; font-weight: 700; }
+  .agent-card { background: linear-gradient(180deg, var(--bg-elevated), var(--surface)); border: 1px solid rgba(167,139,250,0.2); border-radius: 24px; padding: 26px; box-shadow: 0 24px 80px rgba(0,0,0,0.5); margin-bottom: 20px; }
+  .agent-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .agent-avatar { width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, var(--purple), var(--teal)); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .agent-name { font-size: 14px; font-weight: 700; }
   .agent-desc { font-size: 12px; color: var(--ink-dim); }
-  .agent-status { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--teal); font-family: 'IBM Plex Mono', monospace; margin-left: auto; }
-  .agent-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: blink 1.5s infinite; }
+  .agent-online { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--teal); font-family: 'IBM Plex Mono', monospace; margin-left: auto; }
+  .agent-online-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: blink 1.5s infinite; }
 
-  /* CHAT AREA */
-  .chat-area { min-height: 200px; max-height: 340px; overflow-y: auto; margin-bottom: 18px; display: flex; flex-direction: column; gap: 12px; padding: 4px 0; }
-  .chat-area::-webkit-scrollbar { width: 4px; }
-  .chat-area::-webkit-scrollbar-track { background: transparent; }
-  .chat-area::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 4px; }
+  .chat-area { min-height: 180px; max-height: 320px; overflow-y: auto; margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px; padding: 2px 0; }
+  .chat-area::-webkit-scrollbar { width: 3px; }
+  .chat-area::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 3px; }
 
-  .msg { display: flex; gap: 10px; animation: msgIn 0.3s ease; }
-  @keyframes msgIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
+  .msg { display: flex; gap: 9px; animation: msgIn 0.3s ease; }
+  @keyframes msgIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
   .msg.user { flex-direction: row-reverse; }
-  .msg-avatar { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
-  .msg-avatar.ai { background: linear-gradient(135deg, var(--purple), var(--teal)); }
-  .msg-avatar.user { background: linear-gradient(135deg, var(--coral), var(--amber)); }
-  .msg-bubble { max-width: 78%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.55; }
-  .msg.ai .msg-bubble { background: var(--surface-2); border: 1px solid var(--line); border-radius: 14px 14px 14px 4px; color: var(--ink); }
-  .msg.user .msg-bubble { background: linear-gradient(135deg, rgba(167,139,250,0.15), rgba(45,212,191,0.1)); border: 1px solid rgba(167,139,250,0.2); border-radius: 14px 14px 4px 14px; color: var(--ink); }
-  .msg-time { font-size: 10px; color: var(--ink-faint); margin-top: 4px; font-family: 'IBM Plex Mono', monospace; }
+  .msg-av { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+  .msg-av.ai { background: linear-gradient(135deg, var(--purple), var(--teal)); }
+  .msg-av.user { background: linear-gradient(135deg, var(--coral), var(--amber)); }
+  .msg-bub { max-width: 80%; padding: 10px 13px; border-radius: 13px; font-size: 13px; line-height: 1.55; }
+  .msg.ai .msg-bub { background: var(--surface-2); border: 1px solid var(--line); border-radius: 13px 13px 13px 3px; }
+  .msg.user .msg-bub { background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.2); border-radius: 13px 13px 3px 13px; }
+  .msg-time { font-size: 10px; color: var(--ink-faint); margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
 
-  /* PARSED RESULT CARD */
-  .parsed-card { background: var(--bg); border: 1px solid rgba(45,212,191,0.2); border-radius: 12px; padding: 14px; margin-top: 10px; }
-  .parsed-title { font-size: 11px; color: var(--teal); font-family: 'IBM Plex Mono', monospace; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-  .parsed-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
+  .parsed-card { background: var(--bg); border: 1px solid rgba(45,212,191,0.2); border-radius: 11px; padding: 13px; margin-top: 10px; }
+  .parsed-title { font-size: 10px; color: var(--teal); font-family: 'IBM Plex Mono', monospace; margin-bottom: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  .parsed-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
   .parsed-row .pk { color: var(--ink-faint); }
-  .parsed-row .pv { font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: var(--ink); }
+  .parsed-row .pv { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
   .parsed-row .pv.green { color: var(--teal); }
   .parsed-row .pv.amber { color: var(--amber); }
 
-  /* TYPING INDICATOR */
-  .typing { display: none; align-items: center; gap: 10px; }
+  .typing { display: none; align-items: center; gap: 9px; margin-bottom: 10px; }
   .typing.show { display: flex; }
-  .typing-bubble { background: var(--surface-2); border: 1px solid var(--line); border-radius: 14px 14px 14px 4px; padding: 10px 14px; display: flex; gap: 4px; align-items: center; }
-  .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-faint); animation: typingAnim 1.2s infinite; }
-  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes typingAnim { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)} }
+  .typing-bub { background: var(--surface-2); border: 1px solid var(--line); border-radius: 13px 13px 13px 3px; padding: 10px 14px; display: flex; gap: 4px; }
+  .typing-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-faint); animation: ta 1.2s infinite; }
+  .typing-dot:nth-child(2){animation-delay:0.2s} .typing-dot:nth-child(3){animation-delay:0.4s}
+  @keyframes ta{0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)}}
 
-  /* INPUT AREA */
-  .input-area { display: flex; gap: 10px; align-items: flex-end; }
-  .input-shell { flex: 1; background: var(--bg); border: 1px solid rgba(167,139,250,0.2); border-radius: 14px; padding: 13px 16px; display: flex; align-items: center; gap: 10px; transition: border-color 0.2s; }
+  .quick-prompts { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+  .qp { background: var(--surface); border: 1px solid var(--line); border-radius: 100px; padding: 6px 13px; font-size: 12px; color: var(--ink-dim); cursor: pointer; transition: all 0.2s; font-family: 'Sora', sans-serif; }
+  .qp:hover { border-color: var(--purple); color: var(--ink); background: rgba(167,139,250,0.06); }
+
+  .input-area { display: flex; gap: 9px; align-items: center; }
+  .input-shell { flex: 1; background: var(--bg); border: 1px solid rgba(167,139,250,0.2); border-radius: 13px; padding: 12px 15px; display: flex; align-items: center; gap: 9px; transition: border-color 0.2s; }
   .input-shell:focus-within { border-color: var(--purple); }
   .input-shell input { flex: 1; background: transparent; border: none; outline: none; color: var(--ink); font-family: 'Sora', sans-serif; font-size: 14px; }
   .input-shell input::placeholder { color: var(--ink-faint); }
-  .input-icon { font-size: 16px; flex-shrink: 0; }
-  .btn-send-msg { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--purple), var(--teal)); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0; }
-  .btn-send-msg:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(167,139,250,0.3); }
-
-  /* QUICK PROMPTS */
-  .quick-prompts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
-  .quick-prompt { background: var(--surface); border: 1px solid var(--line); border-radius: 100px; padding: 7px 14px; font-size: 12px; color: var(--ink-dim); cursor: pointer; transition: all 0.2s; font-family: 'Sora', sans-serif; }
-  .quick-prompt:hover { border-color: var(--purple); color: var(--ink); background: rgba(167,139,250,0.06); }
+  .btn-go { width: 42px; height: 42px; border-radius: 11px; background: linear-gradient(135deg, var(--purple), var(--teal)); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 17px; transition: transform 0.2s; flex-shrink: 0; color: white; font-weight: 700; }
+  .btn-go:hover { transform: translateY(-1px); }
 
   /* TRANSFER PANEL */
-  .transfer-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; margin-bottom: 24px; display: none; animation: fadeIn 0.4s ease; }
-  .transfer-panel.show { display: block; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
-  .tp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .transfer-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; margin-bottom: 18px; display: none; }
+  .transfer-panel.show { display: block; animation: fadeUp 0.35s ease; }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .tp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
   .tp-title { font-size: 15px; font-weight: 700; }
   .tp-badge { font-size: 10px; color: var(--purple); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.2); padding: 3px 9px; border-radius: 5px; font-family: 'IBM Plex Mono', monospace; }
-  .tp-field { margin-bottom: 13px; }
-  .tp-label { font-size: 11px; color: var(--ink-dim); margin-bottom: 6px; }
-  .tp-input { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink); width: 100%; outline: none; transition: border-color 0.2s; }
+  .tp-field { margin-bottom: 12px; }
+  .tp-label { font-size: 11px; color: var(--ink-dim); margin-bottom: 5px; }
+  .tp-input { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink); width: 100%; outline: none; transition: border-color 0.2s; }
   .tp-input:focus { border-color: var(--teal); }
-  .tp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .tp-breakdown { background: var(--bg); border: 1px solid var(--line-warm); border-radius: 10px; padding: 13px; margin: 14px 0; }
-  .tp-bd-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
+  .tp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+  .tp-breakdown { background: var(--bg); border: 1px solid rgba(45,212,191,0.15); border-radius: 10px; padding: 12px; margin: 12px 0; }
+  .tp-bd-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
   .tp-bd-row .k { color: var(--ink-dim); }
   .tp-bd-row .v { font-family: 'IBM Plex Mono', monospace; }
   .tp-bd-row .v.green { color: var(--teal); }
-  .tp-bd-row .v.amber { color: var(--amber); font-weight: 700; font-size: 14px; }
-  .tp-divider { height: 1px; background: var(--line); margin: 6px 0; }
+  .tp-bd-row .v.amber { color: var(--amber); font-weight: 700; font-size: 13px; }
+  .tp-divider { height: 1px; background: var(--line); margin: 5px 0; }
+
+  /* TX STATUS */
+  .tx-status { background: var(--bg); border: 1px solid rgba(167,139,250,0.2); border-radius: 10px; padding: 12px; margin: 12px 0; display: none; }
+  .tx-status.show { display: block; }
+  .tx-status-row { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .tx-spinner { width: 14px; height: 14px; border: 2px solid rgba(167,139,250,0.3); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .tx-msg { color: var(--ink-dim); }
+  .tx-hash-link { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--teal); text-decoration: none; display: block; margin-top: 8px; word-break: break-all; }
+  .tx-hash-link:hover { text-decoration: underline; }
+
   .btn-transfer { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--purple), var(--teal)); color: white; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
   .btn-transfer:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(167,139,250,0.3); }
+  .btn-transfer:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
   /* SUCCESS */
-  .success-panel { background: var(--surface); border: 1px solid rgba(45,212,191,0.3); border-radius: 18px; padding: 28px; text-align: center; display: none; animation: fadeIn 0.4s ease; }
-  .success-panel.show { display: block; }
-  .success-emoji { font-size: 52px; margin-bottom: 12px; }
-  .success-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
-  .success-sub { font-size: 14px; color: var(--ink-dim); margin-bottom: 20px; }
+  .success-panel { background: var(--surface); border: 1px solid rgba(45,212,191,0.3); border-radius: 18px; padding: 26px; text-align: center; display: none; }
+  .success-panel.show { display: block; animation: fadeUp 0.4s ease; }
+  .success-emoji { font-size: 50px; margin-bottom: 12px; }
+  .success-title { font-size: 21px; font-weight: 800; margin-bottom: 6px; }
+  .success-sub { font-size: 14px; color: var(--ink-dim); margin-bottom: 18px; }
   .success-details { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 16px; text-align: left; }
-  .success-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
+  .success-row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; }
   .success-row .sk { color: var(--ink-faint); }
   .success-row .sv { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
   .success-row .sv.green { color: var(--teal); }
   .success-row .sv.amber { color: var(--amber); }
+  .explorer-link { display: block; color: var(--teal); font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-decoration: none; background: rgba(45,212,191,0.05); border: 1px solid rgba(45,212,191,0.15); padding: 9px 13px; border-radius: 9px; margin-bottom: 14px; word-break: break-all; }
+  .explorer-link:hover { background: rgba(45,212,191,0.1); }
   .btn-new { width: 100%; padding: 13px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; color: var(--ink); font-family: 'Sora', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; margin-bottom: 8px; }
   .btn-tweet { width: 100%; padding: 13px; background: transparent; border: 1px solid rgba(167,139,250,0.3); border-radius: 12px; color: var(--purple); font-family: 'Sora', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; }
 
   /* HOW IT WORKS */
-  .how-section { margin: 40px 0; }
-  .how-title { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 2px; font-family: 'IBM Plex Mono', monospace; margin-bottom: 16px; text-align: center; }
-  .how-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
-  @media(max-width:600px) { .how-steps { grid-template-columns: 1fr; } }
-  .how-step { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
-  .how-step-num { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--purple); margin-bottom: 10px; }
-  .how-step-icon { font-size: 22px; margin-bottom: 10px; }
-  .how-step h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .how-section { margin: 36px 0; }
+  .how-title { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 2px; font-family: 'IBM Plex Mono', monospace; margin-bottom: 14px; text-align: center; }
+  .how-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+  @media(max-width:600px){.how-steps{grid-template-columns:1fr}}
+  .how-step { background: var(--surface); border: 1px solid var(--line); border-radius: 13px; padding: 16px; }
+  .how-step-num { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--purple); margin-bottom: 9px; }
+  .how-step-icon { font-size: 20px; margin-bottom: 9px; }
+  .how-step h3 { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
   .how-step p { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
 
-  footer { border-top: 1px solid var(--line); padding: 24px 0; text-align: center; color: var(--ink-faint); font-size: 11px; margin-top: 20px; }
+  /* ERROR TOAST */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #2D1418; border: 1px solid rgba(255,107,91,0.4); color: var(--coral); padding: 12px 20px; border-radius: 12px; font-size: 13px; display: none; z-index: 999; animation: fadeUp 0.3s ease; max-width: 360px; text-align: center; }
+  .toast.show { display: block; }
+
+  footer { border-top: 1px solid var(--line); padding: 22px 0; text-align: center; color: var(--ink-faint); font-size: 11px; margin-top: 16px; }
   footer strong { color: var(--coral); }
+  footer a { color: var(--teal); text-decoration: none; }
 </style>
 </head>
 <body>
@@ -166,9 +186,10 @@
       <div class="brand-mark">🤖</div>
       GiwaRemit<span> Agent</span>
     </div>
-    <div class="nav-badges">
+    <div class="nav-right">
       <div class="badge badge-ai"><span class="badge-dot"></span>AI Powered</div>
       <div class="badge badge-arc">⚡ Arc v0.7.2</div>
+      <button class="btn-wallet" id="walletBtn" onclick="connectWallet()">Connect Wallet</button>
     </div>
   </div>
 </nav>
@@ -177,8 +198,20 @@
   <section class="hero">
     <div class="hero-eyebrow">🤖 Lepton Hackathon · Canteen × Circle × Arc</div>
     <h1>Talk to your <span class="grad">remittance agent</span></h1>
-    <p>Just tell the agent where to send money. It understands natural language, picks the right corridor, and settles USDC on Arc in under a second.</p>
+    <p>Tell the agent where to send USDC. It parses your request, sets up the transfer, and settles on Arc Testnet in under a second.</p>
   </section>
+
+  <!-- WALLET STATUS -->
+  <div class="wallet-bar" id="walletBar">
+    <div class="wallet-info">
+      <div class="wallet-dot"></div>
+      <span class="wallet-addr" id="wAddr">—</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="wallet-balance" id="wBalance">— USDC</span>
+      <span class="wallet-network">Arc Testnet</span>
+    </div>
+  </div>
 
   <!-- AGENT CARD -->
   <div class="agent-card">
@@ -186,50 +219,44 @@
       <div class="agent-avatar">🤖</div>
       <div>
         <div class="agent-name">GiwaRemit Agent</div>
-        <div class="agent-desc">AI-powered USDC remittance · Arc v0.7.2</div>
+        <div class="agent-desc">Real USDC transfers · Arc Testnet · v0.7.2</div>
       </div>
-      <div class="agent-status"><span class="agent-status-dot"></span>Online</div>
+      <div class="agent-online"><span class="agent-online-dot"></span>Online</div>
     </div>
 
-    <!-- CHAT -->
     <div class="chat-area" id="chatArea">
       <div class="msg ai">
-        <div class="msg-avatar ai">🤖</div>
+        <div class="msg-av ai">🤖</div>
         <div>
-          <div class="msg-bubble">
-            Hey! I'm your GiwaRemit Agent. Tell me who to send USDC to and I'll handle the rest — amount, corridor, fees, everything. Try something like:<br><br>
-            <em style="color:var(--ink-dim)">"Send $50 to my family in Pakistan"</em>
+          <div class="msg-bub">
+            Hey! I'm your GiwaRemit Agent. Connect your wallet and tell me where to send USDC — I'll handle the rest and execute a <strong>real transaction on Arc Testnet</strong>!<br><br>
+            <em style="color:var(--ink-dim)">Try: "Send 1 USDC to Pakistan for family support"</em>
           </div>
           <div class="msg-time">Just now</div>
         </div>
       </div>
     </div>
 
-    <!-- TYPING -->
     <div class="typing" id="typing">
-      <div class="msg-avatar ai">🤖</div>
-      <div class="typing-bubble">
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
+      <div class="msg-av ai">🤖</div>
+      <div class="typing-bub">
+        <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
       </div>
     </div>
 
-    <!-- QUICK PROMPTS -->
     <div class="quick-prompts" id="quickPrompts">
-      <button class="quick-prompt" onclick="usePrompt(this)">Send $50 to my family in Pakistan</button>
-      <button class="quick-prompt" onclick="usePrompt(this)">Transfer 100 USDC to India for rent</button>
-      <button class="quick-prompt" onclick="usePrompt(this)">Pay 200 USDC to Nigeria for Invoice #47</button>
-      <button class="quick-prompt" onclick="usePrompt(this)">Send $30 to Philippines — school fees</button>
+      <button class="qp" onclick="usePrompt(this)">Send 1 USDC to Pakistan</button>
+      <button class="qp" onclick="usePrompt(this)">Transfer 2 USDC to India for rent</button>
+      <button class="qp" onclick="usePrompt(this)">Pay 5 USDC to Nigeria Invoice #47</button>
+      <button class="qp" onclick="usePrompt(this)">Send 0.5 USDC to Philippines</button>
     </div>
 
-    <!-- INPUT -->
     <div class="input-area">
       <div class="input-shell">
-        <span class="input-icon">💬</span>
-        <input type="text" id="msgInput" placeholder="Tell the agent what to do..." onkeydown="if(event.key==='Enter') sendMsg()" />
+        <span style="font-size:15px">💬</span>
+        <input type="text" id="msgInput" placeholder="Tell the agent what to do..." onkeydown="if(event.key==='Enter')sendMsg()" />
       </div>
-      <button class="btn-send-msg" onclick="sendMsg()">→</button>
+      <button class="btn-go" onclick="sendMsg()">→</button>
     </div>
   </div>
 
@@ -237,53 +264,64 @@
   <div class="transfer-panel" id="transferPanel">
     <div class="tp-header">
       <div class="tp-title">Transfer Details</div>
-      <div class="tp-badge">AI Generated ✓</div>
+      <div class="tp-badge">AI Parsed ✓</div>
     </div>
 
     <div class="tp-field">
-      <div class="tp-label">Recipient Wallet</div>
+      <div class="tp-label">Recipient Wallet Address</div>
       <input class="tp-input" id="tpWallet" type="text" placeholder="0x..." />
     </div>
 
     <div class="tp-row">
       <div class="tp-field">
         <div class="tp-label">Amount (USDC)</div>
-        <input class="tp-input" id="tpAmount" type="number" placeholder="0.00" oninput="updateBreakdown()" />
+        <input class="tp-input" id="tpAmount" type="number" step="0.01" placeholder="0.00" oninput="updateBreakdown()" />
       </div>
       <div class="tp-field">
         <div class="tp-label">Currency</div>
-        <input class="tp-input" id="tpCurrency" type="text" placeholder="PKR" readonly />
+        <input class="tp-input" id="tpCurrency" type="text" readonly />
       </div>
     </div>
 
     <div class="tp-field">
-      <div class="tp-label">Memo (Arc v0.7.2 on-chain)</div>
-      <input class="tp-input" id="tpMemo" type="text" placeholder="Payment memo..." />
+      <div class="tp-label">On-chain Memo (Arc v0.7.2)</div>
+      <input class="tp-input" id="tpMemo" type="text" placeholder="Payment reference..." />
     </div>
 
     <div class="tp-breakdown">
       <div class="tp-bd-row"><span class="k">They receive</span><span class="v amber" id="tpReceive">—</span></div>
       <div class="tp-bd-row"><span class="k">Exchange rate</span><span class="v" id="tpRate">—</span></div>
-      <div class="tp-bd-row"><span class="k">Network fee</span><span class="v green">$0.04</span></div>
+      <div class="tp-bd-row"><span class="k">Network fee</span><span class="v green">~$0.009 USDC</span></div>
       <div class="tp-divider"></div>
-      <div class="tp-bd-row"><span class="k">Settlement</span><span class="v green">~0.8 sec · Arc v0.7.2</span></div>
+      <div class="tp-bd-row"><span class="k">Settlement</span><span class="v green">Sub-second · Arc Testnet</span></div>
+      <div class="tp-bd-row"><span class="k">Explorer</span><span class="v green">testnet.arcscan.app</span></div>
     </div>
 
-    <button class="btn-transfer" onclick="executeTransfer()">Execute Transfer ⚡</button>
+    <!-- TX STATUS -->
+    <div class="tx-status" id="txStatus">
+      <div class="tx-status-row">
+        <div class="tx-spinner" id="txSpinner"></div>
+        <span class="tx-msg" id="txMsg">Sending transaction...</span>
+      </div>
+      <a class="tx-hash-link" id="txHashLink" href="#" target="_blank" style="display:none;"></a>
+    </div>
+
+    <button class="btn-transfer" id="btnTransfer" onclick="executeTransfer()">⚡ Execute Real Transfer on Arc</button>
   </div>
 
   <!-- SUCCESS PANEL -->
   <div class="success-panel" id="successPanel">
     <div class="success-emoji">✅</div>
-    <div class="success-title">Agent executed transfer!</div>
-    <div class="success-sub" id="successSub">Transfer complete</div>
+    <div class="success-title">Transfer confirmed on Arc!</div>
+    <div class="success-sub" id="successSub">Real USDC transferred on Arc Testnet</div>
     <div class="success-details">
-      <div class="success-row"><span class="sk">Status</span><span class="sv green">✓ Confirmed</span></div>
-      <div class="success-row"><span class="sk">Network</span><span class="sv">GIWA Testnet</span></div>
+      <div class="success-row"><span class="sk">Status</span><span class="sv green">✓ Confirmed on-chain</span></div>
+      <div class="success-row"><span class="sk">Network</span><span class="sv">Arc Testnet (Chain 5042002)</span></div>
       <div class="success-row"><span class="sk">Protocol</span><span class="sv amber">Arc v0.7.2</span></div>
-      <div class="success-row"><span class="sk">Fee paid</span><span class="sv green">$0.04</span></div>
-      <div class="success-row"><span class="sk">TX Hash</span><span class="sv" id="successHash" style="font-size:10px">—</span></div>
+      <div class="success-row"><span class="sk">Amount</span><span class="sv" id="successAmt">—</span></div>
+      <div class="success-row"><span class="sk">Memo</span><span class="sv amber" id="successMemo">—</span></div>
     </div>
+    <a class="explorer-link" id="explorerLink" href="#" target="_blank">🔍 View on Arc Explorer (testnet.arcscan.app) →</a>
     <button class="btn-new" onclick="resetAgent()">Send Another Transfer</button>
     <button class="btn-tweet" onclick="tweetResult()">Share on Twitter / X</button>
   </div>
@@ -296,32 +334,46 @@
         <div class="how-step-num">01</div>
         <div class="how-step-icon">💬</div>
         <h3>Natural language</h3>
-        <p>Tell the agent in plain English. It parses amount, destination, currency, and memo automatically.</p>
+        <p>Tell the agent in plain English. It parses amount, destination, and memo automatically.</p>
       </div>
       <div class="how-step">
         <div class="how-step-num">02</div>
         <div class="how-step-icon">🧠</div>
         <h3>AI parsing</h3>
-        <p>Agent extracts transfer details, selects the right corridor (PKR/INR/PHP/NGN/BDT), and attaches an on-chain memo.</p>
+        <p>Agent extracts transfer details and selects the corridor (PKR/INR/PHP/NGN/BDT).</p>
       </div>
       <div class="how-step">
         <div class="how-step-num">03</div>
         <div class="how-step-icon">⚡</div>
-        <h3>Arc settlement</h3>
-        <p>USDC settles on GIWA via Arc v0.7.2 in under a second for $0.04 — with TX Memos recorded on-chain.</p>
+        <h3>Real Arc settlement</h3>
+        <p>Real USDC sent on Arc Testnet in sub-second. TX visible on testnet.arcscan.app.</p>
       </div>
     </div>
   </div>
 </div>
 
 <footer>
-  Built by <strong>msaleh007</strong> · Lepton Hackathon · Canteen × Circle × Arc<br>
-  GiwaRemit Agent · AI-powered USDC remittance · giwaremit.vercel.app
+  Built by <strong>msaleh007</strong> · <a href="https://giwaremit.vercel.app">GiwaRemit</a> · Lepton Hackathon · Canteen × Circle × Arc<br>
+  Real USDC transfers · Arc Testnet (Chain 5042002) · Arc v0.7.2
 </footer>
 
+<div class="toast" id="toast"></div>
+
 <script>
+  // Arc Testnet config
+  const ARC_CHAIN_ID = 5042002;
+  const ARC_CHAIN_ID_HEX = '0x4CEF52';
+  const ARC_RPC = 'https://rpc.testnet.arc.network';
+  const USDC_ADDRESS = '0x3600000000000000000000000000000000000000';
+  const ARC_EXPLORER = 'https://testnet.arcscan.app';
+
+  const USDC_ABI = [
+    'function balanceOf(address owner) view returns (uint256)',
+    'function transfer(address to, uint256 amount) returns (bool)',
+    'function decimals() view returns (uint8)',
+  ];
+
   const currencies = {
-    'pakistan': { code: 'PKR', rate: 278.5, flag: '🇵🇰' },
     'pakistan': { code: 'PKR', rate: 278.5, flag: '🇵🇰' },
     'india': { code: 'INR', rate: 83.2, flag: '🇮🇳' },
     'philippines': { code: 'PHP', rate: 56.8, flag: '🇵🇭' },
@@ -329,9 +381,70 @@
     'bangladesh': { code: 'BDT', rate: 119.5, flag: '🇧🇩' },
   };
 
+  let provider, signer, walletAddr = '';
   let currentTransfer = null;
-  let msgCount = 0;
+  let lastTxHash = '';
 
+  // WALLET
+  async function connectWallet() {
+    if (!window.ethereum) { showToast('MetaMask not found! Please install it.'); return; }
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      walletAddr = accounts[0];
+      provider = new ethers.BrowserProvider(window.ethereum);
+      signer = await provider.getSigner();
+
+      // Switch to Arc Testnet
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: ARC_CHAIN_ID_HEX }],
+        });
+      } catch (switchErr) {
+        if (switchErr.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: ARC_CHAIN_ID_HEX,
+              chainName: 'Arc Testnet',
+              nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
+              rpcUrls: [ARC_RPC],
+              blockExplorerUrls: [ARC_EXPLORER],
+            }],
+          });
+        }
+      }
+
+      provider = new ethers.BrowserProvider(window.ethereum);
+      signer = await provider.getSigner();
+
+      const btn = document.getElementById('walletBtn');
+      btn.classList.add('on');
+      btn.textContent = walletAddr.slice(0,6) + '…' + walletAddr.slice(-4);
+
+      document.getElementById('wAddr').textContent = walletAddr.slice(0,6) + '…' + walletAddr.slice(-4);
+      document.getElementById('walletBar').classList.add('show');
+
+      await fetchBalance();
+
+      addMsg('Wallet connected! ✅ You\'re on Arc Testnet. Your USDC balance is updated above. Now tell me where to send USDC!', 'ai');
+    } catch(e) {
+      showToast('Wallet connection failed: ' + (e.message || 'Unknown error'));
+    }
+  }
+
+  async function fetchBalance() {
+    try {
+      const usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, provider);
+      const bal = await usdc.balanceOf(walletAddr);
+      const formatted = ethers.formatUnits(bal, 6);
+      document.getElementById('wBalance').textContent = parseFloat(formatted).toFixed(2) + ' USDC';
+    } catch(e) {
+      document.getElementById('wBalance').textContent = '— USDC';
+    }
+  }
+
+  // CHAT
   function usePrompt(btn) {
     document.getElementById('msgInput').value = btn.textContent;
     sendMsg();
@@ -341,85 +454,65 @@
     const input = document.getElementById('msgInput');
     const text = input.value.trim();
     if (!text) return;
-
     addMsg(text, 'user');
     input.value = '';
     document.getElementById('quickPrompts').style.display = 'none';
-
     showTyping();
-    setTimeout(() => {
-      hideTyping();
-      processMessage(text);
-    }, 1400);
+    setTimeout(() => { hideTyping(); processMessage(text); }, 1200);
   }
 
   function addMsg(text, role, extra = '') {
     const chat = document.getElementById('chatArea');
-    const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    const now = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     const div = document.createElement('div');
     div.className = `msg ${role}`;
     div.innerHTML = `
-      <div class="msg-avatar ${role}">${role === 'ai' ? '🤖' : '👤'}</div>
+      <div class="msg-av ${role}">${role==='ai'?'🤖':'👤'}</div>
       <div>
-        <div class="msg-bubble">${text}${extra}</div>
+        <div class="msg-bub">${text}${extra}</div>
         <div class="msg-time">${now}</div>
       </div>`;
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
   }
 
-  function showTyping() {
-    const t = document.getElementById('typing');
-    t.classList.add('show');
-    document.getElementById('chatArea').scrollTop = 9999;
-  }
-
-  function hideTyping() {
-    document.getElementById('typing').classList.remove('show');
-  }
+  function showTyping() { document.getElementById('typing').classList.add('show'); }
+  function hideTyping() { document.getElementById('typing').classList.remove('show'); }
 
   function processMessage(text) {
     const lower = text.toLowerCase();
+    const amtMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:usdc|usd|\$)?/i);
+    const amount = amtMatch ? parseFloat(amtMatch[1]) : 1;
 
-    // Parse amount
-    const amtMatch = text.match(/\$?(\d+(?:\.\d+)?)\s*(?:usdc|usd|\$)?/i);
-    const amount = amtMatch ? parseFloat(amtMatch[1]) : 50;
-
-    // Parse country
-    let country = null, currency = null;
+    let country = 'pakistan', currency = currencies['pakistan'];
     for (const [key, val] of Object.entries(currencies)) {
       if (lower.includes(key)) { country = key; currency = val; break; }
     }
-    if (!currency) { currency = currencies['pakistan']; country = 'pakistan'; }
 
-    // Parse memo
-    let memo = '';
-    const memoMatch = text.match(/(?:for|memo:|note:)\s*(.+?)(?:\.|$)/i);
-    if (memoMatch) memo = memoMatch[1].trim();
-    else if (lower.includes('rent')) memo = 'Rent payment';
+    let memo = 'GiwaRemit transfer';
+    if (lower.includes('rent')) memo = 'Rent payment';
     else if (lower.includes('family')) memo = 'Family support';
     else if (lower.includes('school') || lower.includes('fee')) memo = 'School fees';
     else if (lower.includes('invoice')) memo = text.match(/invoice\s*#?\d+/i)?.[0] || 'Invoice payment';
+    else if (lower.includes('salary') || lower.includes('payroll')) memo = 'Salary payment';
 
     currentTransfer = { amount, currency, country, memo };
 
-    const local = (amount * currency.rate).toLocaleString('en-US', {maximumFractionDigits: 0});
+    const local = (amount * currency.rate).toLocaleString('en-US',{maximumFractionDigits:0});
     const capCountry = country.charAt(0).toUpperCase() + country.slice(1);
 
     const parsedHTML = `
       <div class="parsed-card">
-        <div class="parsed-title">✓ Transfer parsed</div>
+        <div class="parsed-title">✓ Transfer parsed — real Arc tx</div>
         <div class="parsed-row"><span class="pk">Amount</span><span class="pv amber">${amount} USDC</span></div>
         <div class="parsed-row"><span class="pk">Destination</span><span class="pv">${currency.flag} ${capCountry}</span></div>
         <div class="parsed-row"><span class="pk">They receive</span><span class="pv green">${local} ${currency.code}</span></div>
-        <div class="parsed-row"><span class="pk">Rate</span><span class="pv">1 USDC = ${currency.rate} ${currency.code}</span></div>
-        ${memo ? `<div class="parsed-row"><span class="pk">Memo</span><span class="pv">${memo}</span></div>` : ''}
-        <div class="parsed-row"><span class="pk">Network fee</span><span class="pv green">$0.04 · Arc v0.7.2</span></div>
+        <div class="parsed-row"><span class="pk">Memo</span><span class="pv">${memo}</span></div>
+        <div class="parsed-row"><span class="pk">Fee</span><span class="pv green">~$0.009 USDC on Arc</span></div>
       </div>`;
 
-    addMsg(`Got it! I've parsed your transfer request. Sending <strong>${amount} USDC</strong> to ${currency.flag} ${capCountry} — they'll receive <strong>${local} ${currency.code}</strong> in under a second. ${memo ? `Memo: <em>${memo}</em>.` : ''} Review the details below and add a wallet address to proceed.`, 'ai', parsedHTML);
+    addMsg(`Parsed! Sending <strong>${amount} USDC</strong> to ${currency.flag} ${capCountry} (${local} ${currency.code}). Add the recipient wallet address below to execute the <strong>real Arc Testnet transaction</strong>.`, 'ai', parsedHTML);
 
-    // Fill transfer panel
     document.getElementById('tpAmount').value = amount;
     document.getElementById('tpCurrency').value = currency.code;
     document.getElementById('tpMemo').value = memo;
@@ -434,44 +527,108 @@
   function updateBreakdown() {
     if (!currentTransfer) return;
     const amt = parseFloat(document.getElementById('tpAmount').value) || 0;
-    const local = (amt * currentTransfer.currency.rate).toLocaleString('en-US', {maximumFractionDigits: 0});
+    const local = (amt * currentTransfer.currency.rate).toLocaleString('en-US',{maximumFractionDigits:0});
     document.getElementById('tpReceive').textContent = `${local} ${currentTransfer.currency.code}`;
   }
 
-  function executeTransfer() {
-    const wallet = document.getElementById('tpWallet').value;
-    const amount = document.getElementById('tpAmount').value;
-    const memo = document.getElementById('tpMemo').value;
+  // REAL TRANSFER
+  async function executeTransfer() {
+    if (!signer) { showToast('Connect your wallet first!'); return; }
 
-    if (!wallet) { alert('Please enter recipient wallet address'); return; }
-    if (!amount || amount <= 0) { alert('Please enter a valid amount'); return; }
+    const toAddr = document.getElementById('tpWallet').value.trim();
+    const amount = parseFloat(document.getElementById('tpAmount').value);
+    const memo = document.getElementById('tpMemo').value.trim();
 
-    const local = (parseFloat(amount) * currentTransfer.currency.rate).toLocaleString('en-US', {maximumFractionDigits: 0});
-    const hash = '0x' + Array.from({length:64}, () => Math.floor(Math.random()*16).toString(16)).join('');
+    if (!toAddr || !toAddr.startsWith('0x') || toAddr.length !== 42) {
+      showToast('Please enter a valid wallet address (0x...)'); return;
+    }
+    if (!amount || amount <= 0) { showToast('Please enter a valid amount'); return; }
 
-    // Show success
-    document.getElementById('transferPanel').classList.remove('show');
-    document.getElementById('successSub').textContent = `${amount} USDC → ${local} ${currentTransfer.currency.code} delivered`;
-    document.getElementById('successHash').textContent = hash.slice(0,20) + '...' + hash.slice(-8);
-    document.getElementById('successPanel').classList.add('show');
-    document.getElementById('successPanel').scrollIntoView({behavior:'smooth'});
+    const btn = document.getElementById('btnTransfer');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
 
-    addMsg(`Transfer executed! 🎉 <strong>${amount} USDC</strong> sent to ${currentTransfer.currency.flag} ${currentTransfer.country} — ${local} ${currentTransfer.currency.code} delivered. TX: <code style="font-size:11px;color:var(--teal)">${hash.slice(0,16)}...</code>`, 'ai');
+    const statusBox = document.getElementById('txStatus');
+    statusBox.classList.add('show');
+    document.getElementById('txMsg').textContent = 'Preparing transaction...';
+    document.getElementById('txHashLink').style.display = 'none';
+
+    try {
+      const usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
+      const amountInUnits = ethers.parseUnits(amount.toString(), 6);
+
+      document.getElementById('txMsg').textContent = 'Confirm in MetaMask...';
+
+      const tx = await usdc.transfer(toAddr, amountInUnits);
+
+      document.getElementById('txMsg').textContent = 'Transaction sent! Waiting for confirmation...';
+      lastTxHash = tx.hash;
+
+      const hashLink = document.getElementById('txHashLink');
+      hashLink.href = `${ARC_EXPLORER}/tx/${tx.hash}`;
+      hashLink.textContent = `🔍 ${tx.hash.slice(0,18)}...${tx.hash.slice(-6)} — View on Arc Explorer`;
+      hashLink.style.display = 'block';
+
+      addMsg(`Transaction sent! ⚡ Hash: <code style="font-size:11px;color:var(--teal)">${tx.hash.slice(0,16)}...</code> Waiting for Arc confirmation...`, 'ai');
+
+      const receipt = await tx.wait();
+
+      document.getElementById('txMsg').textContent = '✓ Confirmed on Arc Testnet!';
+      document.getElementById('txSpinner').style.display = 'none';
+
+      // Show success
+      const local = (amount * currentTransfer.currency.rate).toLocaleString('en-US',{maximumFractionDigits:0});
+      document.getElementById('transferPanel').classList.remove('show');
+      document.getElementById('successSub').textContent = `${amount} USDC → ${local} ${currentTransfer.currency.code}`;
+      document.getElementById('successAmt').textContent = `${amount} USDC (block #${receipt.blockNumber})`;
+      document.getElementById('successMemo').textContent = memo || '—';
+      document.getElementById('explorerLink').href = `${ARC_EXPLORER}/tx/${tx.hash}`;
+      document.getElementById('successPanel').classList.add('show');
+      document.getElementById('successPanel').scrollIntoView({behavior:'smooth'});
+
+      addMsg(`✅ Confirmed on Arc Testnet! Block #${receipt.blockNumber}. Real USDC transferred!`, 'ai');
+
+      await fetchBalance();
+
+    } catch(e) {
+      document.getElementById('txMsg').textContent = 'Transaction failed';
+      showToast('Error: ' + (e.reason || e.message || 'Transaction failed'));
+      btn.disabled = false;
+      btn.textContent = '⚡ Execute Real Transfer on Arc';
+    }
   }
 
   function tweetResult() {
-    if (!currentTransfer) return;
-    const text = `Just used the GiwaRemit AI Agent to send USDC cross-border in <1 second for $0.04 on Arc Testnet! Built for @Canteen_xyz Lepton Hackathon ⚡ #Arc #USDC #AIAgents #Lepton`;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+    const text = `Just used the GiwaRemit AI Agent to send real USDC on Arc Testnet in <1 second! 🤖⚡\n\nBuilt for @Canteen_xyz Lepton Hackathon × @circle × @arc\n\n#Arc #USDC #AIAgents #Lepton #Web3`;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=https://giwaremit-agent.vercel.app`, '_blank');
   }
 
   function resetAgent() {
     document.getElementById('successPanel').classList.remove('show');
     document.getElementById('transferPanel').classList.remove('show');
+    document.getElementById('txStatus').classList.remove('show');
+    document.getElementById('txSpinner').style.display = 'block';
     document.getElementById('quickPrompts').style.display = 'flex';
-    currentTransfer = null;
+    document.getElementById('btnTransfer').disabled = false;
+    document.getElementById('btnTransfer').textContent = '⚡ Execute Real Transfer on Arc';
     document.getElementById('tpWallet').value = '';
+    currentTransfer = null;
     window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  // Listen for account/network changes
+  if (window.ethereum) {
+    window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts.length > 0) { walletAddr = accounts[0]; fetchBalance(); }
+    });
+    window.ethereum.on('chainChanged', () => window.location.reload());
   }
 </script>
 </body>

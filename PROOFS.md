@@ -23,11 +23,10 @@ GiwaRemit Agent executes real transactions on **Arc Testnet** (Chain ID `5042002
 
 ## Transaction log
 
-_Update this table with real hashes as transfers are executed during the hackathon window:_
-
 | Date | Amount | Corridor | Memo | TX Hash | Explorer Link |
 |---|---|---|---|---|---|
-| _pending_ | _pending_ | _pending_ | _pending_ | _pending_ | _pending_ |
+| June 18, 2026 | 3 USDC | India (INR) | GiwaRemit transfer | `0x711a7703259852ba4faacfcaee645c0ff751cd85f3191c6eb930e12eb08e755d` | [View on Arcscan](https://testnet.arcscan.app/tx/0x711a7703259852ba4faacfcaee645c0ff751cd85f3191c6eb930e12eb08e755d) |
+| June 18, 2026 | 2 USDC | India (INR) | GiwaRemit transfer | `0x50ae770104b3942b9041d85d92af35aef5fb67021e46728ca8f7c5140b3c4014` | [View on Arcscan](https://testnet.arcscan.app/tx/0x50ae770104b3942b9041d85d92af35aef5fb67021e46728ca8f7c5140b3c4014) |
 
 ## Builder's note
 

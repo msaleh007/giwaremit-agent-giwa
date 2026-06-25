@@ -556,7 +556,7 @@
 
 
   <!-- POOL SYSTEM -->
-  <div class="pool-card" id="poolCard" style="display:none;">
+  <div class="pool-card" id="poolCard">
     <div class="pool-head">
       <div>
         <div class="pool-title">🏦 USDC Pool</div>
@@ -614,7 +614,7 @@
   </div>
 
   <!-- REFERRAL SYSTEM -->
-  <div class="referral-card" id="referralCard" style="display:none;">
+  <div class="referral-card" id="referralCard">
     <div class="referral-head">
       <div>
         <div class="referral-title">💸 Referral Program</div>
@@ -649,7 +649,7 @@
       <div class="referral-step"><div class="ref-step-n">1</div><span>You deposit minimum <strong style="color:var(--amber)">$5 USDC</strong> to activate referrals</span></div>
       <div class="referral-step"><div class="ref-step-n">2</div><span>Share your unique referral link with friends</span></div>
       <div class="referral-step"><div class="ref-step-n">3</div><span>Friend joins and deposits $5+ USDC</span></div>
-      <div class="referral-step"><div class="ref-step-n">4</div><span>You earn <strong style="color:var(--coral)">$1 USDC</strong> automatically — unlimited referrals!</span></div>
+      <div class="referral-step"><div class="ref-step-n">4</div><span>You earn <strong style="color:var(--coral)">20% of their deposit</strong> automatically — $5→$1, $10→$2, $50→$10!</span></div>
     </div>
 
     <div class="referral-earnings">
@@ -1069,12 +1069,13 @@
     const amt = parseFloat(document.getElementById('depositAmt').value);
     if (!amt || amt < 5) { showToast('Minimum deposit is $5 USDC!'); return; }
 
-    // Calculate referral reward (20%)
-    const refReward = amt * 0.20;
+    // Calculate referral reward (20% of deposit)
+    const refReward = parseFloat((amt * 0.20).toFixed(2));
     const referrer = localStorage.getItem('giwaremit_referrer');
 
     poolData.balance += amt;
     poolData.totalDeposited += amt;
+    poolData.refRewards += refReward;
 
     // Process referral reward
     if (referrer && referrer !== walletAddr) {
@@ -1085,7 +1086,7 @@
         refData.count += 1;
         refData.earned += refReward;
         localStorage.setItem(`giwaremit_ref_${referrer}`, JSON.stringify(refData));
-        addMsg(`Referral reward processed! Your referrer earned <strong style="color:var(--amber)">$${refReward.toFixed(2)} USDC</strong> (20% of your deposit)! 🎉`, 'ai');
+        addMsg(`Referral reward processed! Your referrer earned <strong style="color:var(--amber)">$${refReward.toFixed(2)} USDC</strong> (20% of $${amt} deposit)! 🎉`, 'ai');
       }
     }
 
@@ -1151,7 +1152,7 @@
     document.getElementById('referralCard').style.display = 'block';
 
     // Generate referral link
-    const refLink = `${window.location.origin}${window.location.pathname}?ref=${walletAddr}`;
+    const refLink = `https://giwaremit-agent.vercel.app/?ref=${walletAddr}`;
     document.getElementById('refLink').textContent = refLink;
 
     // Check if referred by someone

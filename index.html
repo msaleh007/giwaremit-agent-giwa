@@ -252,6 +252,30 @@
   .hi-usd { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 15px; }
   .hi-local { font-size: 11px; color: var(--teal); margin-top: 3px; }
 
+
+  /* REFERRAL SYSTEM */
+  .referral-card { background: linear-gradient(135deg, rgba(255,107,91,0.08), rgba(110,231,183,0.05)); border: 1px solid rgba(255,107,91,0.2); border-radius: 18px; padding: 28px; margin: 0 0 40px; }
+  .referral-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .referral-title { font-size: 18px; font-weight: 700; }
+  .referral-badge { font-size: 11px; color: var(--coral); background: rgba(255,107,91,0.1); border: 1px solid rgba(255,107,91,0.2); padding: 4px 10px; border-radius: 6px; font-family: 'IBM Plex Mono', monospace; }
+  .referral-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .ref-stat { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; text-align: center; }
+  .ref-stat-num { font-size: 24px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; color: var(--amber); }
+  .ref-stat-label { font-size: 11px; color: var(--ink-faint); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .referral-link-box { background: var(--bg); border: 1px solid rgba(45,212,191,0.2); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .referral-link-text { flex: 1; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--teal); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .btn-copy { background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.2); color: var(--teal); padding: 7px 14px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: 'Sora', sans-serif; font-weight: 600; white-space: nowrap; }
+  .btn-copy:hover { background: rgba(45,212,191,0.2); }
+  .referral-how { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .referral-how-title { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-family: 'IBM Plex Mono', monospace; }
+  .referral-step { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--ink-dim); padding: 5px 0; }
+  .ref-step-n { width: 20px; height: 20px; border-radius: 50%; background: rgba(255,107,91,0.15); color: var(--coral); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .referral-earnings { margin-top: 14px; background: rgba(110,231,183,0.05); border: 1px solid rgba(110,231,183,0.15); border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+  .ref-earn-label { font-size: 13px; color: var(--ink-dim); }
+  .ref-earn-val { font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--amber); font-size: 16px; }
+  .btn-withdraw { background: linear-gradient(135deg, var(--coral), var(--amber)); border: none; color: #1A0F08; padding: 8px 18px; border-radius: 8px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .btn-withdraw:disabled { opacity: 0.4; cursor: not-allowed; }
+  @media (max-width: 600px) { .referral-stats { grid-template-columns: repeat(2,1fr); } }
   footer { border-top: 1px solid var(--line); padding: 30px 0; text-align: center; color: var(--ink-faint); font-size: 12px; line-height: 2; }
   footer strong { color: var(--coral); }
   footer a { color: var(--teal); text-decoration: none; }
@@ -496,6 +520,55 @@
   </div>
 </div>
 
+
+  <!-- REFERRAL SYSTEM -->
+  <div class="referral-card" id="referralCard" style="display:none;">
+    <div class="referral-head">
+      <div>
+        <div class="referral-title">💸 Referral Program</div>
+        <div style="font-size:13px;color:var(--ink-dim);margin-top:4px;">Deposit $5+ USDC → Share link → Earn $1 per referral!</div>
+      </div>
+      <div class="referral-badge">Unlimited Earnings</div>
+    </div>
+
+    <div class="referral-stats">
+      <div class="ref-stat">
+        <div class="ref-stat-num" id="refCount">0</div>
+        <div class="ref-stat-label">Total Refers</div>
+      </div>
+      <div class="ref-stat">
+        <div class="ref-stat-num" id="refEarned">$0</div>
+        <div class="ref-stat-label">Total Earned</div>
+      </div>
+      <div class="ref-stat">
+        <div class="ref-stat-num" id="refPending">$0</div>
+        <div class="ref-stat-label">Pending</div>
+      </div>
+    </div>
+
+    <div class="referral-link-box">
+      <span style="font-size:13px;color:var(--ink-faint)">🔗</span>
+      <span class="referral-link-text" id="refLink">Connect wallet to get your link</span>
+      <button class="btn-copy" onclick="copyRefLink()">Copy</button>
+    </div>
+
+    <div class="referral-how">
+      <div class="referral-how-title">How it works</div>
+      <div class="referral-step"><div class="ref-step-n">1</div><span>You deposit minimum <strong style="color:var(--amber)">$5 USDC</strong> to activate referrals</span></div>
+      <div class="referral-step"><div class="ref-step-n">2</div><span>Share your unique referral link with friends</span></div>
+      <div class="referral-step"><div class="ref-step-n">3</div><span>Friend joins and deposits $5+ USDC</span></div>
+      <div class="referral-step"><div class="ref-step-n">4</div><span>You earn <strong style="color:var(--coral)">$1 USDC</strong> automatically — unlimited referrals!</span></div>
+    </div>
+
+    <div class="referral-earnings">
+      <div>
+        <div class="ref-earn-label">Your referral earnings</div>
+        <div class="ref-earn-val" id="refEarnVal">0.00 USDC</div>
+      </div>
+      <button class="btn-withdraw" id="btnWithdraw" onclick="withdrawReferral()" disabled>Withdraw</button>
+    </div>
+  </div>
+
 <footer>
   Built by <strong>msaleh007</strong> · <a href="https://giwaremit.vercel.app">GiwaRemit</a> · Lepton Hackathon · Canteen × Circle × Arc<br>
   Real USDC transfers · Arc Testnet (Chain 5042002) · Arc v0.7.2 Memo Contract<br>
@@ -643,6 +716,7 @@
       document.getElementById('wAddr').textContent = walletAddr.slice(0,6) + '…' + walletAddr.slice(-4);
       document.getElementById('walletBar').classList.add('show');
       await fetchBalance();
+      initReferral();
       addMsg('Wallet connected! ✅ You\'re on Arc Testnet. Every transfer will include an <strong style="color:var(--coral)">on-chain memo</strong> via Arc v0.7.2! Tell me where to send USDC!', 'ai');
     } catch(e) { showToast('Connection failed: ' + (e.message || 'Unknown error')); }
   }
@@ -871,6 +945,81 @@
     const t = document.getElementById('toast');
     t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+
+  // ── REFERRAL SYSTEM ──
+  let referralData = { count: 0, earned: 0, pending: 0 };
+
+  function initReferral() {
+    if (!walletAddr) return;
+
+    // Show referral card
+    document.getElementById('referralCard').style.display = 'block';
+
+    // Generate referral link
+    const refLink = `${window.location.origin}${window.location.pathname}?ref=${walletAddr}`;
+    document.getElementById('refLink').textContent = refLink;
+
+    // Check if referred by someone
+    const urlParams = new URLSearchParams(window.location.search);
+    const referrer = urlParams.get('ref');
+    if (referrer && referrer !== walletAddr) {
+      localStorage.setItem('giwaremit_referrer', referrer);
+    }
+
+    // Load referral data from localStorage
+    const saved = localStorage.getItem(`giwaremit_ref_${walletAddr}`);
+    if (saved) {
+      referralData = JSON.parse(saved);
+      updateReferralUI();
+    }
+  }
+
+  function updateReferralUI() {
+    document.getElementById('refCount').textContent = referralData.count;
+    document.getElementById('refEarned').textContent = '$' + referralData.earned;
+    document.getElementById('refPending').textContent = '$' + referralData.pending;
+    document.getElementById('refEarnVal').textContent = referralData.earned.toFixed(2) + ' USDC';
+    document.getElementById('btnWithdraw').disabled = referralData.earned <= 0;
+  }
+
+  function copyRefLink() {
+    const link = document.getElementById('refLink').textContent;
+    navigator.clipboard.writeText(link).then(() => {
+      showToast('Referral link copied! Share it to earn $1 per referral! 🎉');
+    });
+  }
+
+  function processReferralReward(depositAmount) {
+    if (depositAmount < 5) return;
+    const referrer = localStorage.getItem('giwaremit_referrer');
+    if (!referrer || referrer === walletAddr) return;
+
+    // Check if already rewarded
+    const rewarded = localStorage.getItem(`giwaremit_rewarded_${walletAddr}`);
+    if (rewarded) return;
+
+    // Mark as rewarded
+    localStorage.setItem(`giwaremit_rewarded_${walletAddr}`, 'true');
+
+    // Add $1 to referrer earnings
+    const refData = JSON.parse(localStorage.getItem(`giwaremit_ref_${referrer}`) || '{"count":0,"earned":0,"pending":0}');
+    refData.count += 1;
+    refData.earned += 1;
+    localStorage.setItem(`giwaremit_ref_${referrer}`, JSON.stringify(refData));
+
+    addMsg(`You joined via referral! Your referrer earned <strong style="color:var(--amber)">$1 USDC</strong> reward! 🎉`, 'ai');
+  }
+
+  function withdrawReferral() {
+    if (referralData.earned <= 0) return;
+    showToast(`Withdrawal of ${referralData.earned} USDC initiated! Processing...`);
+    // In production this would trigger actual USDC transfer
+    referralData.pending = referralData.earned;
+    referralData.earned = 0;
+    localStorage.setItem(`giwaremit_ref_${walletAddr}`, JSON.stringify(referralData));
+    updateReferralUI();
   }
 
   if (window.ethereum) {

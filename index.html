@@ -253,6 +253,39 @@
   .hi-local { font-size: 11px; color: var(--teal); margin-top: 3px; }
 
 
+
+  /* POOL SYSTEM */
+  .pool-card { background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(45,212,191,0.04)); border: 1px solid rgba(56,189,248,0.2); border-radius: 18px; padding: 28px; margin: 0 0 30px; }
+  .pool-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .pool-title { font-size: 18px; font-weight: 700; }
+  .pool-badge { font-size: 11px; color: var(--sky); background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2); padding: 4px 10px; border-radius: 6px; font-family: 'IBM Plex Mono', monospace; }
+  .pool-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .pool-stat { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; text-align: center; }
+  .pool-stat-num { font-size: 22px; font-weight: 800; font-family: 'IBM Plex Mono', monospace; color: var(--sky); }
+  .pool-stat-label { font-size: 11px; color: var(--ink-faint); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .pool-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  .pool-action-box { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .pool-action-title { font-size: 12px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-family: 'IBM Plex Mono', monospace; }
+  .pool-input { display: flex; gap: 8px; align-items: center; }
+  .pool-input input { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; color: var(--ink); font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; outline: none; width: 100%; }
+  .pool-input input:focus { border-color: var(--sky); }
+  .btn-deposit { background: linear-gradient(135deg, var(--sky), var(--teal)); border: none; color: #060914; padding: 10px 16px; border-radius: 8px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  .btn-deposit:hover { opacity: 0.9; }
+  .btn-pool-withdraw { background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2); color: var(--sky); padding: 10px 16px; border-radius: 8px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  .btn-pool-withdraw:disabled { opacity: 0.4; cursor: not-allowed; }
+  .pool-info { background: rgba(110,231,183,0.05); border: 1px solid rgba(110,231,183,0.15); border-radius: 10px; padding: 12px 16px; }
+  .pool-info-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
+  .pool-info-row .pk { color: var(--ink-faint); }
+  .pool-info-row .pv { font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: var(--amber); }
+  .pool-history { margin-top: 14px; }
+  .pool-history-title { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
+  .pool-tx { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; font-size: 12px; }
+  .pool-tx-type { color: var(--ink-dim); }
+  .pool-tx-amt { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
+  .pool-tx-amt.dep { color: var(--teal); }
+  .pool-tx-amt.wit { color: var(--coral); }
+  .pool-tx-amt.ref { color: var(--amber); }
+  @media (max-width: 600px) { .pool-actions { grid-template-columns: 1fr; } .pool-stats { grid-template-columns: repeat(2,1fr); } }
   /* REFERRAL SYSTEM */
   .referral-card { background: linear-gradient(135deg, rgba(255,107,91,0.08), rgba(110,231,183,0.05)); border: 1px solid rgba(255,107,91,0.2); border-radius: 18px; padding: 28px; margin: 0 0 40px; }
   .referral-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
@@ -521,6 +554,65 @@
 </div>
 
 
+
+  <!-- POOL SYSTEM -->
+  <div class="pool-card" id="poolCard" style="display:none;">
+    <div class="pool-head">
+      <div>
+        <div class="pool-title">🏦 USDC Pool</div>
+        <div style="font-size:13px;color:var(--ink-dim);margin-top:4px;">Deposit USDC into pool — transfer from pool — earn referral rewards</div>
+      </div>
+      <div class="pool-badge">⚡ Arc Testnet</div>
+    </div>
+
+    <div class="pool-stats">
+      <div class="pool-stat">
+        <div class="pool-stat-num" id="poolBalance">0.00</div>
+        <div class="pool-stat-label">Your Balance</div>
+      </div>
+      <div class="pool-stat">
+        <div class="pool-stat-num" id="poolTotal">0.00</div>
+        <div class="pool-stat-label">Total Deposited</div>
+      </div>
+      <div class="pool-stat">
+        <div class="pool-stat-num" id="poolRefReward">0.00</div>
+        <div class="pool-stat-label">Ref Rewards</div>
+      </div>
+    </div>
+
+    <div class="pool-actions">
+      <div class="pool-action-box">
+        <div class="pool-action-title">💰 Deposit to Pool</div>
+        <div class="pool-input">
+          <input type="number" id="depositAmt" placeholder="5.00" min="5" step="0.01" />
+          <button class="btn-deposit" onclick="depositToPool()">Deposit</button>
+        </div>
+        <div style="font-size:11px;color:var(--ink-faint);margin-top:6px;">Min $5 USDC · Referrer earns 20%</div>
+      </div>
+      <div class="pool-action-box">
+        <div class="pool-action-title">📤 Withdraw from Pool</div>
+        <div class="pool-input">
+          <input type="number" id="withdrawAmt" placeholder="0.00" step="0.01" />
+          <button class="btn-pool-withdraw" id="btnPoolWithdraw" onclick="withdrawFromPool()">Withdraw</button>
+        </div>
+        <div style="font-size:11px;color:var(--ink-faint);margin-top:6px;">Withdraw anytime</div>
+      </div>
+    </div>
+
+    <div class="pool-info">
+      <div class="pool-info-row"><span class="pk">Referral reward rate</span><span class="pv">20% of deposit</span></div>
+      <div class="pool-info-row"><span class="pk">$5 deposit</span><span class="pv">→ referrer gets $1</span></div>
+      <div class="pool-info-row"><span class="pk">$10 deposit</span><span class="pv">→ referrer gets $2</span></div>
+      <div class="pool-info-row"><span class="pk">$50 deposit</span><span class="pv">→ referrer gets $10</span></div>
+      <div class="pool-info-row"><span class="pk">Settlement</span><span class="pv">Arc Testnet · instant</span></div>
+    </div>
+
+    <div class="pool-history">
+      <div class="pool-history-title">Recent Pool Activity</div>
+      <div id="poolTxList"><div style="text-align:center;color:var(--ink-faint);font-size:12px;padding:10px;">No activity yet</div></div>
+    </div>
+  </div>
+
   <!-- REFERRAL SYSTEM -->
   <div class="referral-card" id="referralCard" style="display:none;">
     <div class="referral-head">
@@ -717,6 +809,7 @@
       document.getElementById('walletBar').classList.add('show');
       await fetchBalance();
       initReferral();
+      initPool();
       addMsg('Wallet connected! ✅ You\'re on Arc Testnet. Every transfer will include an <strong style="color:var(--coral)">on-chain memo</strong> via Arc v0.7.2! Tell me where to send USDC!', 'ai');
     } catch(e) { showToast('Connection failed: ' + (e.message || 'Unknown error')); }
   }
@@ -947,6 +1040,106 @@
     setTimeout(() => t.classList.remove('show'), 4000);
   }
 
+
+
+  // ── POOL SYSTEM ──
+  let poolData = { balance: 0, totalDeposited: 0, refRewards: 0, txHistory: [] };
+
+  function initPool() {
+    if (!walletAddr) return;
+    document.getElementById('poolCard').style.display = 'block';
+    const saved = localStorage.getItem(`giwaremit_pool_${walletAddr}`);
+    if (saved) { poolData = JSON.parse(saved); }
+    updatePoolUI();
+  }
+
+  function savePool() {
+    localStorage.setItem(`giwaremit_pool_${walletAddr}`, JSON.stringify(poolData));
+  }
+
+  function updatePoolUI() {
+    document.getElementById('poolBalance').textContent = poolData.balance.toFixed(2);
+    document.getElementById('poolTotal').textContent = poolData.totalDeposited.toFixed(2);
+    document.getElementById('poolRefReward').textContent = poolData.refRewards.toFixed(2);
+    renderPoolHistory();
+  }
+
+  function depositToPool() {
+    if (!walletAddr) { showToast('Connect wallet first!'); return; }
+    const amt = parseFloat(document.getElementById('depositAmt').value);
+    if (!amt || amt < 5) { showToast('Minimum deposit is $5 USDC!'); return; }
+
+    // Calculate referral reward (20%)
+    const refReward = amt * 0.20;
+    const referrer = localStorage.getItem('giwaremit_referrer');
+
+    poolData.balance += amt;
+    poolData.totalDeposited += amt;
+
+    // Process referral reward
+    if (referrer && referrer !== walletAddr) {
+      const rewarded = localStorage.getItem(`giwaremit_rewarded_${walletAddr}`);
+      if (!rewarded) {
+        localStorage.setItem(`giwaremit_rewarded_${walletAddr}`, 'true');
+        const refData = JSON.parse(localStorage.getItem(`giwaremit_ref_${referrer}`) || '{"count":0,"earned":0,"pending":0}');
+        refData.count += 1;
+        refData.earned += refReward;
+        localStorage.setItem(`giwaremit_ref_${referrer}`, JSON.stringify(refData));
+        addMsg(`Referral reward processed! Your referrer earned <strong style="color:var(--amber)">$${refReward.toFixed(2)} USDC</strong> (20% of your deposit)! 🎉`, 'ai');
+      }
+    }
+
+    poolData.txHistory.unshift({
+      type: 'Deposit',
+      amt: amt,
+      ref: refReward,
+      time: new Date().toLocaleTimeString()
+    });
+
+    savePool();
+    updatePoolUI();
+
+    // Update referral UI
+    updateReferralUI();
+
+    document.getElementById('depositAmt').value = '';
+    showToast(`✅ $${amt} USDC deposited to pool! Referral reward: $${refReward.toFixed(2)}`);
+    addMsg(`Pool deposit successful! <strong style="color:var(--sky)">$${amt} USDC</strong> added to your pool. Pool balance: <strong>$${poolData.balance.toFixed(2)}</strong>`, 'ai');
+  }
+
+  function withdrawFromPool() {
+    if (!walletAddr) { showToast('Connect wallet first!'); return; }
+    const amt = parseFloat(document.getElementById('withdrawAmt').value);
+    if (!amt || amt <= 0) { showToast('Enter withdrawal amount!'); return; }
+    if (amt > poolData.balance) { showToast('Insufficient pool balance!'); return; }
+
+    poolData.balance -= amt;
+    poolData.txHistory.unshift({
+      type: 'Withdraw',
+      amt: amt,
+      ref: 0,
+      time: new Date().toLocaleTimeString()
+    });
+
+    savePool();
+    updatePoolUI();
+    document.getElementById('withdrawAmt').value = '';
+    showToast(`✅ $${amt} USDC withdrawn from pool!`);
+  }
+
+  function renderPoolHistory() {
+    const list = document.getElementById('poolTxList');
+    if (!poolData.txHistory.length) {
+      list.innerHTML = '<div style="text-align:center;color:var(--ink-faint);font-size:12px;padding:10px;">No activity yet</div>';
+      return;
+    }
+    list.innerHTML = poolData.txHistory.slice(0, 5).map(tx => `
+      <div class="pool-tx">
+        <span class="pool-tx-type">${tx.type === 'Deposit' ? '💰' : '📤'} ${tx.type} · ${tx.time}</span>
+        <span class="pool-tx-amt ${tx.type === 'Deposit' ? 'dep' : 'wit'}">${tx.type === 'Deposit' ? '+' : '-'}$${tx.amt.toFixed(2)}</span>
+      </div>
+    `).join('');
+  }
 
   // ── REFERRAL SYSTEM ──
   let referralData = { count: 0, earned: 0, pending: 0 };

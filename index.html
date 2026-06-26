@@ -37,6 +37,14 @@
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
   .arc-badge { display: flex; align-items: center; gap: 6px; background: rgba(110,231,183,0.08); border: 1px solid rgba(110,231,183,0.25); padding: 6px 13px; border-radius: 100px; font-size: 11px; color: var(--amber); font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
   .ai-badge { display: flex; align-items: center; gap: 6px; background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2); padding: 6px 13px; border-radius: 100px; font-size: 11px; color: var(--sky); font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
+
+  /* TOKEN SELECTOR */
+  .token-selector { display:flex; gap:8px; margin-bottom:16px; }
+  .token-btn { flex:1; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--ink2); font-family:'Sora',sans-serif; font-weight:600; font-size:13px; cursor:pointer; transition:all 0.2s; text-align:center; }
+  .token-btn.active-usdc { border-color:var(--sky); color:var(--sky); background:rgba(56,189,248,0.08); }
+  .token-btn.active-eurc { border-color:var(--amber); color:var(--amber); background:rgba(110,231,183,0.08); }
+  .token-btn:hover { border-color:var(--teal); }
+  .eurc-badge { display:flex; align-items:center; gap:6px; background:rgba(110,231,183,0.08); border:1px solid rgba(110,231,183,0.25); padding:6px 13px; border-radius:100px; font-size:11px; color:var(--amber); font-family:'IBM Plex Mono',monospace; font-weight:600; }
   .memo-badge { display: flex; align-items: center; gap: 6px; background: rgba(255,107,91,0.08); border: 1px solid rgba(255,107,91,0.2); padding: 6px 13px; border-radius: 100px; font-size: 11px; color: var(--coral); font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
   .btn-wallet { background: linear-gradient(135deg, var(--coral), var(--amber)); border: none; color: #1A0F08; padding: 10px 20px; border-radius: 10px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
   .btn-wallet:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(255,107,91,0.3); }
@@ -329,6 +337,7 @@
       <div class="ai-badge">🤖 AI Agent</div>
       <div class="arc-badge">⚡ Arc v0.7.2</div>
       <div class="memo-badge">📝 Memo Contract</div>
+      <div class="eurc-badge">💶 EURC</div>
       <div class="net-pill"><span class="net-dot"></span>Arc Testnet</div>
       <button class="btn-wallet" id="walletBtn" onclick="connectWallet()">Connect Wallet</button>
     </div>
@@ -387,7 +396,17 @@
             <div class="wallet-dot"></div>
             <span class="wallet-addr" id="wAddr">—</span>
           </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
           <span class="wallet-balance" id="wBalance">— USDC</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--amber);font-weight:600;" id="wBalanceEURC">— EURC</span>
+        </div>
+        </div>
+
+
+        <!-- TOKEN SELECTOR -->
+        <div class="token-selector" id="tokenSelector" style="display:none;">
+          <button class="token-btn active-usdc" id="btnUSDC" onclick="selectToken('USDC')">💵 USDC</button>
+          <button class="token-btn" id="btnEURC" onclick="selectToken('EURC')">💶 EURC</button>
         </div>
 
         <!-- CHAT -->
@@ -454,7 +473,7 @@
         <div class="field-label"><span>You send</span></div>
         <div class="input-shell-field">
           <input class="amt" type="number" id="tpAmount" step="0.01" placeholder="0.00" oninput="updateBreakdown()" />
-          <div class="usdc-chip">💵 USDC</div>
+          <div class="usdc-chip" id="tpTokenChip">💵 USDC</div>
         </div>
       </div>
       <div class="field">
@@ -678,6 +697,7 @@
 
   // ── Contracts ──
   const USDC_ADDRESS = '0x3600000000000000000000000000000000000000';
+  const EURC_ADDRESS = '0x3700000000000000000000000000000000000000';
   const MEMO_CONTRACT_ADDRESS = '0x5294E9927c3306DcBaDb03fe70b92e01cCede505';
 
   const USDC_ABI = [
@@ -810,6 +830,7 @@
       await fetchBalance();
       initReferral();
       initPool();
+      document.getElementById('tokenSelector').style.display = 'flex';
       addMsg('Wallet connected! ✅ You\'re on Arc Testnet. Every transfer will include an <strong style="color:var(--coral)">on-chain memo</strong> via Arc v0.7.2! Tell me where to send USDC!', 'ai');
     } catch(e) { showToast('Connection failed: ' + (e.message || 'Unknown error')); }
   }
@@ -820,6 +841,7 @@
       const bal = await usdc.balanceOf(walletAddr);
       document.getElementById('wBalance').textContent = parseFloat(ethers.formatUnits(bal, 6)).toFixed(2) + ' USDC';
     } catch(e) { document.getElementById('wBalance').textContent = '— USDC'; }
+    await fetchEURCBalance();
   }
 
   function usePrompt(btn) { document.getElementById('msgInput').value = btn.textContent; sendMsg(); }
@@ -910,6 +932,7 @@
 
     try {
       const amountInUnits = ethers.parseUnits(amount.toString(), 6);
+      const TOKEN_ADDRESS = selectedToken === 'EURC' ? EURC_ADDRESS : USDC_ADDRESS;
 
       // Step 1: Try Memo Contract (Arc v0.7.2)
       let tx;
@@ -929,15 +952,15 @@
         // Send via official Arc v0.7.2 Memo Contract
         document.getElementById('txMsg').textContent = 'Confirm memo transfer in MetaMask...';
         const memoContract = new ethers.Contract(MEMO_CONTRACT_ADDRESS, MEMO_ABI, signer);
-        tx = await memoContract.memo(USDC_ADDRESS, transferData, memoId, memoBytes);
+        tx = await memoContract.memo(TOKEN_ADDRESS, transferData, memoId, memoBytes);
         usedMemoContract = true;
 
       } catch (memoErr) {
         // Fallback to direct USDC transfer if memo contract fails
         console.warn('Memo contract failed, falling back to direct transfer:', memoErr.message);
         document.getElementById('txMsg').textContent = 'Confirm direct transfer in MetaMask...';
-        const usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
-        tx = await usdc.transfer(toAddr, amountInUnits);
+        const tokenContract = new ethers.Contract(TOKEN_ADDRESS, USDC_ABI, signer);
+        tx = await tokenContract.transfer(toAddr, amountInUnits);
         usedMemoContract = false;
       }
 
@@ -968,8 +991,8 @@
       renderHistory();
 
       document.getElementById('transferPanel').classList.remove('show');
-      document.getElementById('successSub').textContent = `${amount} USDC → ${local} ${currentTransfer.currency.code}`;
-      document.getElementById('successAmt').textContent = `${amount} USDC (block #${receipt.blockNumber})`;
+      document.getElementById('successSub').textContent = `${amount} ${selectedToken} → ${local} ${currentTransfer.currency.code}`;
+      document.getElementById('successAmt').textContent = `${amount} ${selectedToken} (block #${receipt.blockNumber})`;
       document.getElementById('successMemo').textContent = memo || '—';
       document.getElementById('explorerLink').href = `${ARC_EXPLORER}/tx/${tx.hash}`;
       document.getElementById('successPanel').classList.add('show');
@@ -1041,6 +1064,28 @@
   }
 
 
+
+
+  // ── TOKEN SYSTEM ──
+  let selectedToken = 'USDC';
+
+  function selectToken(token) {
+    selectedToken = token;
+    document.getElementById('btnUSDC').className = 'token-btn' + (token === 'USDC' ? ' active-usdc' : '');
+    document.getElementById('btnEURC').className = 'token-btn' + (token === 'EURC' ? ' active-eurc' : '');
+    document.getElementById('tpTokenChip').textContent = token === 'USDC' ? '💵 USDC' : '💶 EURC';
+    document.getElementById('tpTokenChip').style.color = token === 'USDC' ? 'var(--sky)' : 'var(--amber)';
+    addMsg(`Switched to <strong style="color:${token === 'USDC' ? 'var(--sky)' : 'var(--amber)'}">💵 ${token}</strong> — now sending in ${token}!`, 'ai');
+    if (walletAddr) fetchBalance();
+  }
+
+  async function fetchEURCBalance() {
+    try {
+      const eurc = new ethers.Contract(EURC_ADDRESS, USDC_ABI, provider);
+      const bal = await eurc.balanceOf(walletAddr);
+      document.getElementById('wBalanceEURC').textContent = parseFloat(ethers.formatUnits(bal, 6)).toFixed(2) + ' EURC';
+    } catch(e) { document.getElementById('wBalanceEURC').textContent = '— EURC'; }
+  }
 
   // ── POOL SYSTEM ──
   let poolData = { balance: 0, totalDeposited: 0, refRewards: 0, txHistory: [] };

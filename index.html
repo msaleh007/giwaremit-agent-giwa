@@ -523,7 +523,7 @@
 
     <div class="breakdown">
       <div class="bd-row"><span class="k">Network fee</span><span class="v free">~$0.009 USDC</span></div>
-      <div class="bd-row"><span class="k">ERC-20 Token</span><span class="v coral">GIWA L2 · 0x5294...e505</span></div>
+      <div class="bd-row"><span class="k">ERC-20 Token</span><span class="v coral">GIWA L2 · 0x91Dd...d0F6</span></div>
       <div class="bd-row"><span class="k">Settlement</span><span class="v free">Sub-second · GIWA Testnet</span></div>
       <div class="bd-divider"></div>
       <div class="bd-row total"><span class="k">They receive</span><span class="v" id="tpReceive">—</span></div>
@@ -543,13 +543,13 @@
   <!-- SUCCESS -->
   <div class="success-panel" id="successPanel">
     <div class="success-emoji">✅</div>
-    <div class="success-title">Transfer confirmed on Arc!</div>
+    <div class="success-title">Transfer confirmed on GIWA!</div>
     <div class="success-sub" id="successSub">Real USDC transferred with on-chain memo</div>
     <div class="success-details">
       <div class="success-row"><span class="sk">Status</span><span class="sv green">✓ Confirmed on-chain</span></div>
       <div class="success-row"><span class="sk">Network</span><span class="sv">GIWA Testnet (91342)</span></div>
       <div class="success-row"><span class="sk">Protocol</span><span class="sv amber">GIWA L2</span></div>
-      <div class="success-row"><span class="sk">ERC-20 Token</span><span class="sv coral">0x5294...e505</span></div>
+      <div class="success-row"><span class="sk">ERC-20 Token</span><span class="sv coral">0x91Dd...d0F6</span></div>
       <div class="success-row"><span class="sk">Amount</span><span class="sv" id="successAmt">—</span></div>
       <div class="success-row"><span class="sk">Memo</span><span class="sv coral" id="successMemo">—</span></div>
     </div>
@@ -763,7 +763,7 @@
   // ── Contracts ──
   const USDC_ADDRESS = '0x91DdFaB2caD6D8dC9a4476E196d58bC26eAfd0F6';
   const EURC_ADDRESS = '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a'; // GIWA Testnet EURC (official)
-  const MEMO_CONTRACT_ADDRESS = '0x5294E9927c3306DcBaDb03fe70b92e01cCede505';
+  const MEMO_CONTRACT_ADDRESS = '0x91DdFaB2caD6D8dC9a4476E196d58bC26eAfd0F6';
 
   const USDC_ABI = [
     'function balanceOf(address owner) view returns (uint256)',
@@ -955,7 +955,7 @@
       <div class="parsed-row"><span class="pk">To</span><span class="pv">${currency.flag} ${cap}</span></div>
       <div class="parsed-row"><span class="pk">They receive</span><span class="pv green">${local} ${currency.code}</span></div>
       <div class="parsed-row"><span class="pk">Memo</span><span class="pv coral">${memo}</span></div>
-      <div class="parsed-row"><span class="pk">Contract</span><span class="pv" style="font-size:10px">0x5294...e505</span></div>
+      <div class="parsed-row"><span class="pk">Contract</span><span class="pv" style="font-size:10px">0x91Dd...d0F6</span></div>
       <div class="parsed-row"><span class="pk">Fee</span><span class="pv green">~$0.009 on GIWA</span></div>
     </div>`;
     addMsg(`Parsed! Sending <strong>${amount} USDC</strong> to ${currency.flag} ${cap} — they receive <strong>${local} ${currency.code}</strong>.<br><span style="color:var(--coral);font-size:12px">📝 Memo "${memo}" will be stored on-chain via GIWA L2</span><br><br>Add wallet address below to execute!`, 'ai', parsedHTML);
@@ -1039,7 +1039,7 @@
         ? `<span style="color:var(--coral)">📝 Memo stored on-chain via GIWA L2</span>`
         : `<span style="color:var(--amber)">⚡ Direct USDC transfer</span>`;
 
-      addMsg(`Transaction sent! ⚡ Hash: <code style="font-size:11px;color:var(--teal)">${tx.hash.slice(0,16)}...</code><br>${memoNote}<br>Confirming on Arc...`, 'ai');
+      addMsg(`Transaction sent! ⚡ Hash: <code style="font-size:11px;color:var(--teal)">${tx.hash.slice(0,16)}...</code><br>${memoNote}<br>Confirming on GIWA...`, 'ai');
 
       const receipt = await tx.wait();
       const local = (amount * currentTransfer.currency.rate).toLocaleString('en-US',{maximumFractionDigits:0});
@@ -1106,7 +1106,7 @@
   }
 
   function tweetResult() {
-    const text = `Just used @GiwaRemit AI Agent to send real USDC on GIWA Testnet in <1 second with on-chain memo! 🤖⚡📝\n\nBuilt for @Upbit_xyz GASOK MVP × @Optimism × @arc\n\nERC-20 Token: GIWA L2\n\n#Arc #USDC #AIAgents #Lepton`;
+    const text = `Just used @GiwaRemit AI Agent to send real USDC on GIWA Testnet in <1 second with on-chain memo! 🤖⚡📝\n\nBuilt for @Upbit_xyz GASOK MVP × @Optimism × @giwa\n\nERC-20 Token: GIWA L2\n\n#GIWA #USDC #AIAgents #GASOK`;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=https://giwaremit-agent.vercel.app`, '_blank');
   }
 
@@ -1336,6 +1336,8 @@
 </script>
 </body>
 </html>
+
+
 
 
 

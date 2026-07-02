@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GiwaRemit Agent — AI-Powered USDC Remittance on Arc</title>
+<title>GiwaRemit Agent — AI-Powered USDC Remittance on GIWA</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
 <style>
@@ -354,10 +354,10 @@
     </div>
     <div class="nav-right">
       <div class="ai-badge">🤖 AI Agent</div>
-      <div class="arc-badge">⚡ Arc v0.7.2</div>
-      <div class="memo-badge">📝 Memo Contract</div>
+      <div class="arc-badge">⚡ GIWA L2</div>
+      <div class="memo-badge">📝 ERC-20 Token</div>
       <div class="eurc-badge">💶 EURC</div>
-      <div class="net-pill"><span class="net-dot"></span>Arc Testnet</div>
+      <div class="net-pill"><span class="net-dot"></span>GIWA Testnet</div>
       <button class="btn-wallet" id="walletBtn" onclick="connectWallet()">Connect Wallet</button>
     </div>
   </div>
@@ -367,9 +367,9 @@
   <section class="hero">
     <div class="hero-grid">
       <div>
-        <div class="eyebrow">AI Agent · Lepton Hackathon · Arc Testnet</div>
+        <div class="eyebrow">AI Agent · GASOK MVP · GIWA Testnet</div>
         <h1>Just <span class="flow">tell the agent</span> where to send.</h1>
-        <p class="lede">Talk to your remittance agent in plain English. It parses the transfer, picks the corridor, and settles real USDC on Arc with an on-chain memo in under a second.</p>
+        <p class="lede">Talk to your remittance agent in plain English. It parses the transfer, picks the corridor, and settles real USDC on GIWA with an on-chain memo in under a second.</p>
 
         <div class="corridor">
           <div class="corridor-head">$200 sent · USA → Pakistan</div>
@@ -392,8 +392,8 @@
         <div class="memo-info">
           <div class="memo-info-icon">📝</div>
           <div>
-            <div class="memo-info-text"><strong>Arc v0.7.2 Memo Contract</strong> — Every transfer includes an on-chain memo stored permanently on Arc Testnet via the official Memo contract.</div>
-            <div class="memo-info-addr">Contract: 0x5294E9927c3306DcBaDb03fe70b92e01cCede505</div>
+            <div class="memo-info-text"><strong>GIWA Sepolia</strong> — Every transfer includes an on-chain memo stored permanently on GIWA Testnet via the official ERC-20 Token.</div>
+            <div class="memo-info-addr">Contract: 0x91DdFaB2caD6D8dC9a4476E196d58bC26eAfd0F6</div>
           </div>
         </div>
       </div>
@@ -404,7 +404,7 @@
           <div class="agent-avatar">🤖</div>
           <div>
             <div class="agent-name">GiwaRemit Agent</div>
-            <div class="agent-desc">Real USDC · Arc Testnet · Memo Contract v0.7.2</div>
+            <div class="agent-desc">Real USDC · GIWA Testnet · ERC-20 Token v1.0</div>
           </div>
           <div class="agent-status"><span class="agent-status-dot"></span>Online</div>
         </div>
@@ -433,7 +433,7 @@
           <div class="msg ai">
             <div class="msg-av ai">🤖</div>
             <div>
-              <div class="msg-bub">Hey! Connect your wallet and tell me where to send USDC — I'll execute a <strong>real Arc Testnet transaction</strong> with an <strong style="color:var(--coral)">on-chain memo</strong> via Arc v0.7.2! 🚀<br><br><em style="color:var(--ink-dim)">"Send 1 USDC to Pakistan for rent"</em></div>
+              <div class="msg-bub">Hey! Connect your wallet and tell me where to send USDC — I'll execute a <strong>real GIWA Testnet transaction</strong> with an <strong style="color:var(--coral)">on-chain memo</strong> via GIWA L2! 🚀<br><br><em style="color:var(--ink-dim)">"Send 1 USDC to Pakistan for rent"</em></div>
               <div class="msg-time">Just now</div>
             </div>
           </div>
@@ -467,7 +467,7 @@
     <div class="stat-cell"><div class="stat-num c">$685B</div><div class="stat-cap">Yearly Remittances</div></div>
     <div class="stat-cell"><div class="stat-num a">6.5%</div><div class="stat-cap">Avg Bank Fee</div></div>
     <div class="stat-cell"><div class="stat-num t">0.02%</div><div class="stat-cap">GiwaRemit Fee</div></div>
-    <div class="stat-cell"><div class="stat-num s">&lt;1s</div><div class="stat-cap">Arc Settlement</div></div>
+    <div class="stat-cell"><div class="stat-num s">&lt;1s</div><div class="stat-cap">GIWA settlement</div></div>
   </div>
 
   <!-- TRANSFER PANEL -->
@@ -475,13 +475,13 @@
     <div class="tp-header">
       <div>
         <div class="tp-title">Transfer Details</div>
-        <div class="tp-desc">Real USDC transfer on Arc Testnet with on-chain memo</div>
+        <div class="tp-desc">Real USDC transfer on GIWA Testnet with on-chain memo</div>
       </div>
-      <div class="tp-badge">📝 Memo Contract · Arc v0.7.2</div>
+      <div class="tp-badge">📝 ERC-20 Token · GIWA L2</div>
     </div>
 
     <div class="field">
-      <div class="field-label"><span>Recipient wallet</span><span class="hint">Arc Testnet address</span></div>
+      <div class="field-label"><span>Recipient wallet</span><span class="hint">GIWA Testnet address</span></div>
       <div class="input-shell-field">
         <input type="text" id="tpWallet" placeholder="0x..." />
       </div>
@@ -505,8 +505,8 @@
 
     <div class="field">
       <div class="field-label">
-        <span>Transaction memo <span style="color:var(--coral)">📝 On-chain via Arc v0.7.2</span></span>
-        <span class="hint">stored on Arc</span>
+        <span>Transaction memo <span style="color:var(--coral)">📝 On-chain via GIWA L2</span></span>
+        <span class="hint">stored on GIWA</span>
       </div>
       <div class="memo-shell">
         <span style="font-size:14px">📝</span>
@@ -523,8 +523,8 @@
 
     <div class="breakdown">
       <div class="bd-row"><span class="k">Network fee</span><span class="v free">~$0.009 USDC</span></div>
-      <div class="bd-row"><span class="k">Memo contract</span><span class="v coral">Arc v0.7.2 · 0x5294...e505</span></div>
-      <div class="bd-row"><span class="k">Settlement</span><span class="v free">Sub-second · Arc Testnet</span></div>
+      <div class="bd-row"><span class="k">ERC-20 Token</span><span class="v coral">GIWA L2 · 0x5294...e505</span></div>
+      <div class="bd-row"><span class="k">Settlement</span><span class="v free">Sub-second · GIWA Testnet</span></div>
       <div class="bd-divider"></div>
       <div class="bd-row total"><span class="k">They receive</span><span class="v" id="tpReceive">—</span></div>
     </div>
@@ -547,13 +547,13 @@
     <div class="success-sub" id="successSub">Real USDC transferred with on-chain memo</div>
     <div class="success-details">
       <div class="success-row"><span class="sk">Status</span><span class="sv green">✓ Confirmed on-chain</span></div>
-      <div class="success-row"><span class="sk">Network</span><span class="sv">Arc Testnet (5042002)</span></div>
-      <div class="success-row"><span class="sk">Protocol</span><span class="sv amber">Arc v0.7.2</span></div>
-      <div class="success-row"><span class="sk">Memo Contract</span><span class="sv coral">0x5294...e505</span></div>
+      <div class="success-row"><span class="sk">Network</span><span class="sv">GIWA Testnet (91342)</span></div>
+      <div class="success-row"><span class="sk">Protocol</span><span class="sv amber">GIWA L2</span></div>
+      <div class="success-row"><span class="sk">ERC-20 Token</span><span class="sv coral">0x5294...e505</span></div>
       <div class="success-row"><span class="sk">Amount</span><span class="sv" id="successAmt">—</span></div>
       <div class="success-row"><span class="sk">Memo</span><span class="sv coral" id="successMemo">—</span></div>
     </div>
-    <a class="explorer-link" id="explorerLink" href="#" target="_blank">🔍 View on Arc Explorer (testnet.arcscan.app) →</a>
+    <a class="explorer-link" id="explorerLink" href="#" target="_blank">🔍 View on GIWA Explorer (sepolia-explorer.giwa.io) →</a>
     <button class="btn-done" onclick="resetAgent()">Send Another Transfer</button>
     <button class="btn-share" onclick="tweetResult()">Share on Twitter / X</button>
   </div>
@@ -576,8 +576,8 @@
     </div>
     <div class="step">
       <div class="step-n">STEP 03</div><div class="step-icon">⚡</div>
-      <h3>Real Arc settlement</h3>
-      <p>Real USDC sent via Arc v0.7.2 Memo Contract in sub-second. TX + memo visible on testnet.arcscan.app.</p>
+      <h3>Real GIWA settlement</h3>
+      <p>Real USDC sent via GIWA Sepolia in sub-second. TX + memo visible on sepolia-explorer.giwa.io.</p>
     </div>
   </div>
 
@@ -608,7 +608,7 @@
         <div class="phase-label done">✅ Phase 1 — Live</div>
         <div class="phase-title">AI Remittance Agent</div>
         <div class="phase-item"><span class="phase-item-icon">🤖</span><span class="phase-item-text"><strong>AI natural language parsing</strong> — plain English transfer commands</span></div>
-        <div class="phase-item"><span class="phase-item-icon">⚡</span><span class="phase-item-text"><strong>Arc v0.7.2 Memo Contract</strong> — on-chain payment references</span></div>
+        <div class="phase-item"><span class="phase-item-icon">⚡</span><span class="phase-item-text"><strong>GIWA Sepolia</strong> — on-chain payment references</span></div>
         <div class="phase-item"><span class="phase-item-icon">💵</span><span class="phase-item-text"><strong>USDC + EURC support</strong> — multi-currency remittance</span></div>
         <div class="phase-item"><span class="phase-item-icon">🌍</span><span class="phase-item-text"><strong>75+ world currencies</strong> — global corridor support</span></div>
         <div class="phase-item"><span class="phase-item-icon">🏦</span><span class="phase-item-text"><strong>USDC Pool + 20% referral</strong> — community growth</span></div>
@@ -621,7 +621,7 @@
         <div class="phase-item"><span class="phase-item-icon">🏪</span><span class="phase-item-text"><strong>Freelance marketplace</strong> — hire & pay in USDC/EURC</span></div>
         <div class="phase-item"><span class="phase-item-icon">🔐</span><span class="phase-item-text"><strong>Escrow contracts</strong> — funds released on completion</span></div>
         <div class="phase-item"><span class="phase-item-icon">📧</span><span class="phase-item-text"><strong>Email login</strong> — no MetaMask required</span></div>
-        <div class="phase-item"><span class="phase-item-icon">🔄</span><span class="phase-item-text"><strong>Uniswap swap integration</strong> — on Arc DEX</span></div>
+        <div class="phase-item"><span class="phase-item-icon">🔄</span><span class="phase-item-text"><strong>Uniswap swap integration</strong> — on GIWA DEX</span></div>
         <div class="phase-item"><span class="phase-item-icon">📱</span><span class="phase-item-text"><strong>Mobile app</strong> — iOS + Android</span></div>
       </div>
 
@@ -633,7 +633,7 @@
         <div class="phase-item"><span class="phase-item-icon">💳</span><span class="phase-item-text"><strong>x402 Payment Flows</strong> — software-native agent payments</span></div>
         <div class="phase-item"><span class="phase-item-icon">📋</span><span class="phase-item-text"><strong>Subscriptions</strong> — recurring USDC payments</span></div>
         <div class="phase-item"><span class="phase-item-icon">💰</span><span class="phase-item-text"><strong>Spending limits</strong> — programmable agent budgets</span></div>
-        <div class="phase-item"><span class="phase-item-icon">🌐</span><span class="phase-item-text"><strong>Arc Mainnet launch</strong> — real USDC production</span></div>
+        <div class="phase-item"><span class="phase-item-icon">🌐</span><span class="phase-item-text"><strong>GIWA Mainnet launch</strong> — real USDC production</span></div>
       </div>
 
     </div>
@@ -646,7 +646,7 @@
         <div class="pool-title">🏦 USDC Pool</div>
         <div style="font-size:13px;color:var(--ink-dim);margin-top:4px;">Deposit USDC into pool — transfer from pool — earn referral rewards</div>
       </div>
-      <div class="pool-badge">⚡ Arc Testnet</div>
+      <div class="pool-badge">⚡ GIWA Testnet</div>
     </div>
 
     <div class="pool-stats">
@@ -688,7 +688,7 @@
       <div class="pool-info-row"><span class="pk">$5 deposit</span><span class="pv">→ referrer gets $1</span></div>
       <div class="pool-info-row"><span class="pk">$10 deposit</span><span class="pv">→ referrer gets $2</span></div>
       <div class="pool-info-row"><span class="pk">$50 deposit</span><span class="pv">→ referrer gets $10</span></div>
-      <div class="pool-info-row"><span class="pk">Settlement</span><span class="pv">Arc Testnet · instant</span></div>
+      <div class="pool-info-row"><span class="pk">Settlement</span><span class="pv">GIWA Testnet · instant</span></div>
     </div>
 
     <div class="pool-history">
@@ -746,23 +746,23 @@
   </div>
 
 <footer>
-  Built by <strong>msaleh007</strong> · <a href="https://giwaremit.vercel.app">GiwaRemit</a> · Lepton Hackathon · Canteen × Circle × Arc<br>
-  Real USDC transfers · Arc Testnet (Chain 5042002) · Arc v0.7.2 Memo Contract<br>
-  <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-faint)">Memo: 0x5294E9927c3306DcBaDb03fe70b92e01cCede505</span>
+  Built by <strong>msaleh007</strong> · <a href="https://giwaremit.vercel.app">GiwaRemit</a> · GASOK MVP · Upbit × Optimism × GIWA<br>
+  Real USDC transfers · GIWA Testnet (Chain 91342) · GIWA Sepolia<br>
+  <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-faint)">Token: 0x91DdFaB2caD6D8dC9a4476E196d58bC26eAfd0F6</span>
 </footer>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  // ── Arc Testnet Config ──
-  const ARC_CHAIN_ID = 5042002;
-  const ARC_CHAIN_ID_HEX = '0x4CEF52';
-  const ARC_RPC = 'https://rpc.testnet.arc.network';
-  const ARC_EXPLORER = 'https://testnet.arcscan.app';
+  // ── GIWA Testnet Config ──
+  const ARC_CHAIN_ID = 91342;
+  const ARC_CHAIN_ID_HEX = '0x164CE';
+  const ARC_RPC = 'https://sepolia-rpc.giwa.io';
+  const ARC_EXPLORER = 'https://sepolia-explorer.giwa.io';
 
   // ── Contracts ──
-  const USDC_ADDRESS = '0x3600000000000000000000000000000000000000';
-  const EURC_ADDRESS = '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a'; // Arc Testnet EURC (official)
+  const USDC_ADDRESS = '0x91DdFaB2caD6D8dC9a4476E196d58bC26eAfd0F6';
+  const EURC_ADDRESS = '0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a'; // GIWA Testnet EURC (official)
   const MEMO_CONTRACT_ADDRESS = '0x5294E9927c3306DcBaDb03fe70b92e01cCede505';
 
   const USDC_ABI = [
@@ -772,7 +772,7 @@
     'function decimals() view returns (uint8)',
   ];
 
-  // Arc v0.7.2 Official Memo Contract ABI (docs.arc.io)
+  // GIWA L2 Official ERC-20 Token ABI (docs.arc.io)
   const MEMO_ABI = [
     'function memo(address target, bytes data, bytes32 memoId, bytes memoData)',
     'event Memo(address indexed sender, address indexed target, bytes32 callDataHash, bytes32 indexed memoId, bytes memo, uint256 memoIndex)',
@@ -881,7 +881,7 @@
         if (e.code === 4902) {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
-            params: [{ chainId: ARC_CHAIN_ID_HEX, chainName: 'Arc Testnet', nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 }, rpcUrls: [ARC_RPC], blockExplorerUrls: [ARC_EXPLORER] }]
+            params: [{ chainId: ARC_CHAIN_ID_HEX, chainName: 'GIWA Testnet', nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 }, rpcUrls: [ARC_RPC], blockExplorerUrls: [ARC_EXPLORER] }]
           });
         }
       }
@@ -896,7 +896,7 @@
       initReferral();
       initPool();
       document.getElementById('tokenSelector').style.display = 'flex';
-      addMsg('Wallet connected! ✅ You\'re on Arc Testnet. Every transfer will include an <strong style="color:var(--coral)">on-chain memo</strong> via Arc v0.7.2! Tell me where to send USDC!', 'ai');
+      addMsg('Wallet connected! ✅ You\'re on GIWA Testnet. Every transfer will include an <strong style="color:var(--coral)">on-chain memo</strong> via GIWA L2! Tell me where to send USDC!', 'ai');
     } catch(e) { showToast('Connection failed: ' + (e.message || 'Unknown error')); }
   }
 
@@ -950,15 +950,15 @@
     const local = (amount * currency.rate).toLocaleString('en-US',{maximumFractionDigits:0});
     const cap = country.charAt(0).toUpperCase() + country.slice(1);
     const parsedHTML = `<div class="parsed-card">
-      <div class="parsed-title">✓ Transfer parsed · Memo Contract ready</div>
+      <div class="parsed-title">✓ Transfer parsed · ERC-20 Token ready</div>
       <div class="parsed-row"><span class="pk">Amount</span><span class="pv amber">${amount} USDC</span></div>
       <div class="parsed-row"><span class="pk">To</span><span class="pv">${currency.flag} ${cap}</span></div>
       <div class="parsed-row"><span class="pk">They receive</span><span class="pv green">${local} ${currency.code}</span></div>
       <div class="parsed-row"><span class="pk">Memo</span><span class="pv coral">${memo}</span></div>
       <div class="parsed-row"><span class="pk">Contract</span><span class="pv" style="font-size:10px">0x5294...e505</span></div>
-      <div class="parsed-row"><span class="pk">Fee</span><span class="pv green">~$0.009 on Arc</span></div>
+      <div class="parsed-row"><span class="pk">Fee</span><span class="pv green">~$0.009 on GIWA</span></div>
     </div>`;
-    addMsg(`Parsed! Sending <strong>${amount} USDC</strong> to ${currency.flag} ${cap} — they receive <strong>${local} ${currency.code}</strong>.<br><span style="color:var(--coral);font-size:12px">📝 Memo "${memo}" will be stored on-chain via Arc v0.7.2</span><br><br>Add wallet address below to execute!`, 'ai', parsedHTML);
+    addMsg(`Parsed! Sending <strong>${amount} USDC</strong> to ${currency.flag} ${cap} — they receive <strong>${local} ${currency.code}</strong>.<br><span style="color:var(--coral);font-size:12px">📝 Memo "${memo}" will be stored on-chain via GIWA L2</span><br><br>Add wallet address below to execute!`, 'ai', parsedHTML);
     document.getElementById('tpAmount').value = amount;
     document.getElementById('tpCurrency').value = currency.code;
     document.getElementById('tpMemo').value = memo;
@@ -979,7 +979,7 @@
     document.getElementById('tpReceive').textContent = `${local} ${currentTransfer.currency.code}`;
   }
 
-  // ── Main Transfer — Arc v0.7.2 Memo Contract ──
+  // ── Main Transfer — GIWA Sepolia ──
   async function executeTransfer() {
     if (!signer) { showToast('Connect your wallet first!'); return; }
     const toAddr = document.getElementById('tpWallet').value.trim();
@@ -999,7 +999,7 @@
       const amountInUnits = ethers.parseUnits(amount.toString(), 6);
       const TOKEN_ADDRESS = selectedToken === 'EURC' ? EURC_ADDRESS : USDC_ADDRESS;
 
-      // Step 1: Try Memo Contract (Arc v0.7.2)
+      // Step 1: Try ERC-20 Token (GIWA L2)
       let tx;
       let usedMemoContract = false;
 
@@ -1014,29 +1014,29 @@
         const memoId = ethers.id('GiwaRemit-' + Date.now());
         const memoBytes = ethers.toUtf8Bytes(memo);
 
-        // Send via official Arc v0.7.2 Memo Contract
+        // Send via official GIWA Sepolia
         document.getElementById('txMsg').textContent = 'Confirm memo transfer in MetaMask...';
         const memoContract = new ethers.Contract(MEMO_CONTRACT_ADDRESS, MEMO_ABI, signer);
         tx = await memoContract.memo(TOKEN_ADDRESS, transferData, memoId, memoBytes);
         usedMemoContract = true;
 
       } catch (memoErr) {
-        // Fallback to direct USDC transfer if memo contract fails
-        console.warn('Memo contract failed, falling back to direct transfer:', memoErr.message);
+        // Fallback to direct USDC transfer if ERC-20 Token fails
+        console.warn('ERC-20 Token failed, falling back to direct transfer:', memoErr.message);
         document.getElementById('txMsg').textContent = 'Confirm direct transfer in MetaMask...';
         const tokenContract = new ethers.Contract(TOKEN_ADDRESS, USDC_ABI, signer);
         tx = await tokenContract.transfer(toAddr, amountInUnits);
         usedMemoContract = false;
       }
 
-      document.getElementById('txMsg').textContent = 'Waiting for Arc confirmation...';
+      document.getElementById('txMsg').textContent = 'Waiting for GIWA confirmation...';
       const hashLink = document.getElementById('txHashLink');
       hashLink.href = `${ARC_EXPLORER}/tx/${tx.hash}`;
-      hashLink.textContent = `🔍 ${tx.hash.slice(0,20)}...${tx.hash.slice(-6)} — View on Arc Explorer`;
+      hashLink.textContent = `🔍 ${tx.hash.slice(0,20)}...${tx.hash.slice(-6)} — View on GIWA Explorer`;
       hashLink.style.display = 'block';
 
       const memoNote = usedMemoContract
-        ? `<span style="color:var(--coral)">📝 Memo stored on-chain via Arc v0.7.2</span>`
+        ? `<span style="color:var(--coral)">📝 Memo stored on-chain via GIWA L2</span>`
         : `<span style="color:var(--amber)">⚡ Direct USDC transfer</span>`;
 
       addMsg(`Transaction sent! ⚡ Hash: <code style="font-size:11px;color:var(--teal)">${tx.hash.slice(0,16)}...</code><br>${memoNote}<br>Confirming on Arc...`, 'ai');
@@ -1064,8 +1064,8 @@
       document.getElementById('successPanel').scrollIntoView({behavior:'smooth'});
 
       const confirmNote = usedMemoContract
-        ? `✅ Confirmed on Arc Testnet! Block #${receipt.blockNumber}. Memo "<strong style="color:var(--coral)">${memo}</strong>" stored permanently on-chain! 🎉`
-        : `✅ Confirmed on Arc Testnet! Block #${receipt.blockNumber}. Real USDC transferred!`;
+        ? `✅ Confirmed on GIWA Testnet! Block #${receipt.blockNumber}. Memo "<strong style="color:var(--coral)">${memo}</strong>" stored permanently on-chain! 🎉`
+        : `✅ Confirmed on GIWA Testnet! Block #${receipt.blockNumber}. Real USDC transferred!`;
 
       addMsg(confirmNote, 'ai');
       await fetchBalance();
@@ -1089,7 +1089,7 @@
             <div class="hi-flag">${t.flag}</div>
             <div>
               <div class="hi-to">${t.amount} USDC sent</div>
-              <div class="hi-meta">${t.time.toLocaleTimeString()} · Arc Testnet · Block #${t.block}</div>
+              <div class="hi-meta">${t.time.toLocaleTimeString()} · GIWA Testnet · Block #${t.block}</div>
               ${t.memo ? `<div class="hi-memo">📝 ${t.memo}${t.usedMemo ? ' · on-chain ✓' : ''}</div>` : ''}
             </div>
           </div>
@@ -1106,7 +1106,7 @@
   }
 
   function tweetResult() {
-    const text = `Just used @GiwaRemit AI Agent to send real USDC on Arc Testnet in <1 second with on-chain memo! 🤖⚡📝\n\nBuilt for @Canteen_xyz Lepton Hackathon × @circle × @arc\n\nMemo Contract: Arc v0.7.2\n\n#Arc #USDC #AIAgents #Lepton`;
+    const text = `Just used @GiwaRemit AI Agent to send real USDC on GIWA Testnet in <1 second with on-chain memo! 🤖⚡📝\n\nBuilt for @Upbit_xyz GASOK MVP × @Optimism × @arc\n\nERC-20 Token: GIWA L2\n\n#Arc #USDC #AIAgents #Lepton`;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=https://giwaremit-agent.vercel.app`, '_blank');
   }
 
@@ -1336,3 +1336,7 @@
 </script>
 </body>
 </html>
+
+
+
+

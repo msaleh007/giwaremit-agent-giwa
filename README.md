@@ -1,4 +1,4 @@
-# GiwaRemit Agent
+# GiwaRemit Agent 🤖
 
 AI-powered USDC remittance agent on **GIWA Testnet** - built for the GASOK MVP Build Phase (Upbit x Optimism x GIWA).
 
@@ -23,6 +23,13 @@ Talk to the agent in plain English - "Send 1 USDC to Pakistan" - and it executes
 - HTML5, CSS3, Vanilla JavaScript, ethers.js v6
 - GIWA Testnet (Chain ID: 91342, OP Stack / Optimism)
 - GiwaRemitUSDC: 0x91DdFaB2caD6D8dC9a4476E196d58bC26eAfd0F6
+
+## Roadmap
+- Pyth Network price feeds for real-time FX rates (USD/PKR, USD/INR, USD/PHP)
+- KRW-backed stablecoin corridor (Upbit ecosystem integration)
+- Email login - no MetaMask required
+- Mobile app - iOS + Android
+- GIWA Mainnet launch - production USDC transfers
 
 ## Proof of Working
 Real on-chain transfer: TX 0xddb6592ffb404da6cd8c4556e6fb16b0034ca7ce85a26320270ae10b5d9018cb, Block 29680679

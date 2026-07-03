@@ -1,45 +1,34 @@
-# GiwaRemit Agent 🤖
+# GiwaRemit Agent
 
-AI-powered USDC remittance agent on Arc Testnet — built for the Lepton Agents Hackathon (Canteen × Circle × Arc).
+AI-powered USDC remittance agent on **GIWA Testnet** - built for the GASOK MVP Build Phase (Upbit x Optimism x GIWA).
 
 ## Live Demo
-[giwaremit-agent.vercel.app](https://giwaremit-agent.vercel.app)
+https://giwaremit-agent-giwa.vercel.app
+
+## Verified Smart Contract
+GiwaRemitUSDC (grUSDC): 0x91DdFaB2caD6D8dC9a4476E196d58bC26eAfd0F6
+Explorer: https://sepolia-explorer.giwa.io/address/0x91DdFaB2caD6D8dC9a4476E196d58bC26eAfd0F6
 
 ## What It Does
-Talk to the agent in plain English — "Send 1 USDC to Pakistan" — and it parses the request, sets up the transfer, and executes a **real on-chain USDC transaction** on Arc Testnet.
+Talk to the agent in plain English - "Send 1 USDC to Pakistan" - and it executes a real on-chain USDC transaction on GIWA Testnet.
 
 ## Features
 - Natural language parsing (amount, destination, memo)
-- Real USDC transfers on Arc Testnet (not simulated)
-- Auto network switching to Arc Testnet via MetaMask
-- On-chain transaction memos (Arc v0.7.2)
-- Live balance tracking
-- TX hash linked to Arc Explorer (testnet.arcscan.app)
+- Real USDC transfers on GIWA Testnet (not simulated)
+- Auto network switching to GIWA Testnet via MetaMask
+- On-chain transaction memos
 - Multi-currency support: PKR, INR, PHP, NGN, BDT
-- Transfer history with confirmed status
 
 ## Tech Stack
-- HTML5, CSS3, Vanilla JavaScript
-- ethers.js v6 for blockchain interaction
-- Arc Testnet (Chain ID: 5042002)
-- USDC contract: `0x3600000000000000000000000000000000000000`
+- HTML5, CSS3, Vanilla JavaScript, ethers.js v6
+- GIWA Testnet (Chain ID: 91342, OP Stack / Optimism)
+- GiwaRemitUSDC: 0x91DdFaB2caD6D8dC9a4476E196d58bC26eAfd0F6
 
-## 🚀 Built on Latest Arc Infrastructure
-
-GiwaRemit Agent is built to evolve with Arc's expanding ecosystem:
-
-- ✅ **Arc v0.7.2 Transaction Memos** — every remittance carries structured payment references (invoice IDs, recipient notes) at the protocol level
-- ✅ **USDC + EURC native support** — real cross-border transfers, live on testnet
-
-### Roadmap — Powered by Arc Ecosystem Growth
-- 🔜 **Chainlink Data Streams** — real-time FX rate feeds for accurate cross-currency remittance pricing
-- 🔜 **Chainlink CCIP** — cross-chain settlement beyond Arc (Ethereum Sepolia and beyond)
-- 🔜 **Unified Balance Kit** — simplified multi-chain USDC balance management for users sending across corridors
-- 🔜 **Circle Passkey Wallet** — biometric login, no browser extension needed
-- 🔜 **Regional stablecoin corridors** — BRLA (Brazil), MXNB (Mexico), PHPC (Philippines), JPYC (Japan) as Circle onboards regional issuers
+## Proof of Working
+Real on-chain transfer: TX 0xddb6592ffb404da6cd8c4556e6fb16b0034ca7ce85a26320270ae10b5d9018cb, Block 29680679
 
 ## Built For
-Lepton Agents Hackathon — Canteen × Circle × Arc (June 15–29, 2026)
+GASOK MVP Build Phase - Upbit x Optimism x GIWA
 
 ## Built By
-[@msaleh007](https://github.com/msaleh007)
+@msaleh007
